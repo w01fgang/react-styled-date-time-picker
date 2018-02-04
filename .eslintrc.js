@@ -5,7 +5,7 @@ module.exports = {
     "jsx-a11y",
     "flowtype"
   ],
-  "extends": "airbnb",
+  "extends": ["airbnb", "plugin:flowtype/recommended"],
   "settings": {
     "flowtype": {
       "onlyFilesWithFlowAnnotation": false

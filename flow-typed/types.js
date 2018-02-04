@@ -1,1 +1,2 @@
-declare module Props {}
+
+declare type Language = 'ru' | 'en' | 'it' | 'es' | 'pt';

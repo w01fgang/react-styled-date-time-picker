@@ -1,43 +1,44 @@
 // @flow
 import React, { PureComponent } from 'react';
-import styled from 'styled-components';
-import type Moment from 'moment';
+// import type Moment from 'moment';
+import { type DateTimeUnit } from 'luxon';
+import moment from 'moment';
 
-const labels = {
-  ru: {
-    date: 'Дата',
-    time: 'Время',
-  },
-  en: {
-    date: 'Date',
-    time: 'Time',
-  },
-  it: {
-    date: 'Data',
-    time: 'Tempo',
-  },
-  es: {
-    date: 'Fecha',
-    time: 'Tiempo',
-  },
-  pt: {
-    date: 'Data',
-    time: 'Hora',
-  },
-};
+import Modal from './Modal';
+import DateTimePicker from './DateTimePicker';
 
 type Props = {
   open: boolean,
-  value: Moment,
-  language: 'ru' | 'en' | 'it' | 'es' | 'pt',
+  value: DateTimeUnit,
+  language: Language,
   onChange: Function,
+  onClose: Function,
 };
 
-class DateTimePicker extends PureComponent<Props> {
-  handleClick = () => {}
+class Picker extends PureComponent<Props> {
+  handleChange = (date: Date) => {
+    this.props.onChange(date);
+  }
+  
+  handleSave = (date: Date) => {
+    this.props.onChange(date);
+    this.props.onClose();
+  }
+  
   render() {
-    return <div>DateTimePicker</div>;
+    const { open, onClose, value } = this.props;
+    return open ?
+      <Modal onClose={onClose}>
+        <DateTimePicker
+          language={this.props.language}
+          value={value}
+          onChange={this.handleChange}
+          onSave={this.handleSave}
+        />
+      </Modal>
+      :
+      null;
   }
 }
 
-export default DateTimePicker;
+export default Picker;

@@ -27,6 +27,7 @@ module.exports = {
               'transform-react-inline-elements',
               'transform-react-pure-class-to-function',
               'transform-react-remove-prop-types',
+              ['transform-object-rest-spread', { useBuiltIns: true }],
             ],
           },
         },
