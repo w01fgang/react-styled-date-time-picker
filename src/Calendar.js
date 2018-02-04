@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import range from 'lodash.range';
 import chunk from 'lodash.chunk';
-import type Moment from 'moment';
+import { type DateTime } from 'luxon';
 
 import Day from './Day';
 
@@ -21,7 +21,7 @@ const CalendarContainer = styled.div`
 
 const Toolbar = styled.div`
   line-height: 30px;
-  color: #CC2262;
+  color: #00A15F;
   text-align: center;
   margin-bottom: 13px;
 `;
@@ -44,7 +44,7 @@ const ButtonPrev = styled.button`
 `;
 
 const CurrentDate = styled.span`
-  color: #CC2262;
+  color: #00A15F;
 `;
 
 const Table = styled.table`
@@ -58,7 +58,7 @@ const Td = styled.td`
   padding: 8px 0;
   text-align: center;
   cursor: pointer;
-  color: #CC2262;
+  color: #00A15F;
   border: 1px solid #dfe0e4;
   font-size: 11px;
   font-weight: 700;
@@ -69,7 +69,7 @@ const Td = styled.td`
 type Props = {
   onChange: Function,
   switchTab: Function,
-  moment: Moment,
+  value: DateTime,
   language: Language,
   visible: boolean,
 };
@@ -78,31 +78,32 @@ class Calendar extends PureComponent<Props> {
   selectDate = (i: number, w: number) => {
     const prevMonth = (w === 0 && i > 7);
     const nextMonth = (w >= 4 && i <= 14);
-    const m = this.props.moment;
-
-    m.date(i);
-    if (prevMonth) m.subtract(1, 'month');
-    if (nextMonth) m.add(1, 'month');
-    this.props.onChange(m);
+    const { value } = this.props;
+    let date = value.set({ day: i });
+    if (prevMonth) date = date.minus({ month: 1 });
+    if (nextMonth) date = date.plus({ month: 1 });
+    console.log(date);
+    
+    this.props.onChange(date);
     this.props.switchTab();
   }
 
   prevMonth = (e: Event) => {
     e.preventDefault();
-    this.props.onChange(this.props.moment.subtract(1, 'month'));
+    this.props.onChange(this.props.value.minus({ month: 1 }));
   }
 
   nextMonth = (e: Event) => {
     e.preventDefault();
-    this.props.onChange(this.props.moment.add(1, 'month'));
+    this.props.onChange(this.props.value.plus({ month: 1 }));
   }
 
   render() {
-    const { moment: m, visible } = this.props;
-    const d = m.date();
-    const d1 = m.clone().subtract(1, 'month').endOf('month').date();
-    const d2 = m.clone().date(1).day();
-    const d3 = m.clone().endOf('month').date();
+    const { value, visible } = this.props;
+    const d = value.day;
+    const d1 = value.minus({ month: 1 }).endOf('month').day;
+    const d2 = value.set({ day: 1 }).day;
+    const d3 = value.endOf('month').day;
 
     const days = [
       ...range(d1 - (d2 + 1), d1 + 1),
@@ -118,7 +119,7 @@ class Calendar extends PureComponent<Props> {
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
             <i className="ion-ios-arrow-left" />
           </ButtonPrev>
-          <CurrentDate>{m.format('MMMM YYYY')}</CurrentDate>
+          <CurrentDate>{value.toLocaleString({ year: 'numeric', month: 'numeric' })}</CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
             <i className="ion-ios-arrow-right" />
           </ButtonNext>

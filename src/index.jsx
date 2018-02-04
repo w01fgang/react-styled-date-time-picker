@@ -1,15 +1,13 @@
 // @flow
 import React, { PureComponent } from 'react';
-// import type Moment from 'moment';
-import { type DateTimeUnit } from 'luxon';
-import moment from 'moment';
+import { type DateTime } from 'luxon';
 
 import Modal from './Modal';
 import DateTimePicker from './DateTimePicker';
 
 type Props = {
   open: boolean,
-  value: DateTimeUnit,
+  value: DateTime,
   language: Language,
   onChange: Function,
   onClose: Function,
@@ -20,11 +18,6 @@ class Picker extends PureComponent<Props> {
     this.props.onChange(date);
   }
   
-  handleSave = (date: Date) => {
-    this.props.onChange(date);
-    this.props.onClose();
-  }
-  
   render() {
     const { open, onClose, value } = this.props;
     return open ?
@@ -33,7 +26,7 @@ class Picker extends PureComponent<Props> {
           language={this.props.language}
           value={value}
           onChange={this.handleChange}
-          onSave={this.handleSave}
+          onClose={onClose}
         />
       </Modal>
       :

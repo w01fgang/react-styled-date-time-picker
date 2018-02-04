@@ -1,36 +1,19 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-// import InputSlider from 'react-input-slider';
+import { type DateTime } from 'luxon';
 
-const labels = {
-  ru: {
-    hours: 'Часы',
-    minutes: 'Минуты',
-  },
-  en: {
-    hours: 'Hours',
-    minutes: 'Minutes',
-  },
-  it: {
-    hours: 'Ore',
-    minutes: 'Minuti',
-  },
-  es: {
-    hours: 'Ore',
-    minutes: 'Minuti',
-  },
-  pt: {
-    hours: 'Ore',
-    minutes: 'Minuti',
-  },
-};
+import Arrow from './Arrow';
 
 const TimeContainer = styled.div`
+  display: ${props => (props.visible ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: center;
   color: #fff;
-  padding-top: 50px;
-  display: ${props => (props.visible ? 'block' : 'none')};
-  height: 270px;
+  height: 320px;
+  & div {
+        user-select: none;
+  }
 `;
 
 const TimeInputContainer = styled.div`
@@ -43,7 +26,7 @@ const Label = styled.span`
   height: 65px;
   font-size: 38px;
   line-height: 65px;
-  background-color: #CC2262;
+  background-color: #00A15F;
   border-radius: 3px;
   text-align: center;
   font-family: Roboto;  
@@ -55,7 +38,7 @@ const Input = styled.input`
   height: 65px;
   font-size: 38px;
   line-height: 65px;
-  background-color: #CC2262;
+  background-color: #00A15F;
   border-radius: 3px;
   text-align: center;
   -webkit-appearance: none;
@@ -72,11 +55,25 @@ const Separater = styled.span`
   display: inline-block;
   font-size: 32px;
   font-weight: bold;
-  color: #CC2262;
+  color: #00A15F;
   width: 32px;
   height: 65px;
   line-height: 65px;
   text-align: center;
+`;
+
+const FlexRow = styled.div`
+  flex: 0 0 100%;
+`;
+
+const ArrowContainer = styled.span`
+  margin: 0 16px;
+`;
+
+const ArrowDownContainer = ArrowContainer.extend`
+  & svg {
+    transform: rotate(180deg);
+  }
 `;
 
 type Position = {
@@ -86,8 +83,7 @@ type Position = {
 
 type Props = {
   visible: boolean,
-  moment: Object,
-  language: Language,
+  value: DateTime,
   onChange: Function,
 };
 
@@ -106,22 +102,21 @@ class Time extends Component<Props, State> {
   }
  
   getHours = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    const m = this.props.moment;
-    m.hours(parseInt(e.target.value, 10));
-    this.props.onChange(m);
+    const { value } = this.props;
+    const date = value.set({ hours: parseInt(e.target.value, 10) });
+    this.props.onChange(date);
     this.editHours();
   }
   
   getMinutes = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    const m = this.props.moment;
-    m.minutes(parseInt(e.target.value, 10));
-    this.props.onChange(m);
+    const { value } = this.props;
+    const date = value.set({ minutes: parseInt(e.target.value, 10) });
+    this.props.onChange(date);
     this.editMinutes();
   }
 
   editHours = () => {
     this.setState({ editHours: !this.state.editHours });
-    console.log(this.hours);
     
     setTimeout(() => {
       if (this.hours) this.hours.focus();
@@ -140,71 +135,90 @@ class Time extends Component<Props, State> {
 
   changeMinutes = (pos: Position) => {
     this.setState(() => ({ editMinutes: false }));
-    const m = this.props.moment;
-    m.minutes(parseInt(pos.x, 10));
-    this.props.onChange(m);
+    const { value } = this.props;
+    const date = value.set({ minutes: parseInt(pos.x, 10) });
+    this.props.onChange(date);
   }
   
   changeHours = (pos: Position) => {
     this.setState(() => ({ editHours: false }));
-    const m = this.props.moment;
-    m.hours(parseInt(pos.x, 10));
-    this.props.onChange(m);
+    const { value } = this.props;
+    const date = value.set({ hours: parseInt(pos.x, 10) });
+    this.props.onChange(date);
+  }
+
+  hoursUp = () => {
+    const { value, onChange } = this.props;
+    onChange(value.plus({ hour: 1 }));
+  }
+
+  hoursDown = () => {
+    const { value, onChange } = this.props;
+    onChange(value.minus({ hour: 1 }));
+  }
+
+  minutesUp = () => {
+    const { value, onChange } = this.props;
+    onChange(value.plus({ minute: 1 }));
+  }
+
+  minutesDown = () => {
+    const { value, onChange } = this.props;
+    onChange(value.minus({ minute: 1 }));
   }
   
   render() {
     const { editHours, editMinutes } = this.state;
     
-    const { moment, language, visible } = this.props;
+    const { value, visible } = this.props;
     return (
       <TimeContainer visible={visible}>
         <TimeInputContainer>
-          <Input
-            type="text"
-            defaultValue={moment.format('HH')}
-            onBlur={this.getHours}
-            min={0}
-            max={23}
-            innerRef={(node) => { this.hours = node; }}
-            show={editHours}
-          />
-          <Label visible={!editHours} onClick={this.editHours}>
-            {moment.format('HH')}
-          </Label>
-          <Separater>:</Separater>
-          <Input
-            type="text"
-            className="time"
-            defaultValue={moment.format('mm')}
-            onBlur={this.getMinutes}
-            min={0}
-            max={23}
-            innerRef={(node) => { this.minutes = node; }}
-            show={editMinutes}
-          />
-          <Label visible={!editMinutes} onClick={this.editMinutes}>
-            {moment.format('HH')}
-          </Label>
+          <FlexRow>
+            <ArrowContainer>
+              <Arrow height="65" width="65" onClick={this.hoursUp} />
+            </ArrowContainer>
+            <ArrowContainer>
+              <Arrow height="65" width="65" onClick={this.minutesUp} />
+            </ArrowContainer>
+          </FlexRow>
+          <FlexRow>
+            <Input
+              type="text"
+              defaultValue={value.hour}
+              onBlur={this.getHours}
+              min={0}
+              max={23}
+              innerRef={(node) => { this.hours = node; }}
+              show={editHours}
+            />
+            <Label visible={!editHours} onClick={this.editHours}>
+              {value.hour}
+            </Label>
+            <Separater>:</Separater>
+            <Input
+              type="text"
+              className="time"
+              defaultValue={value.minute}
+              onBlur={this.getMinutes}
+              min={0}
+              max={23}
+              innerRef={(node) => { this.minutes = node; }}
+              show={editMinutes}
+            />
+            <Label visible={!editMinutes} onClick={this.editMinutes}>
+              {value.minute}
+            </Label>
+          </FlexRow>
+          <FlexRow>
+            <ArrowDownContainer>
+              <Arrow height="65" width="65" onClick={this.hoursDown} />
+            </ArrowDownContainer>
+            <ArrowDownContainer>
+              <Arrow height="65" width="65" onClick={this.minutesDown} />
+            </ArrowDownContainer>
+          </FlexRow>
         </TimeInputContainer>
-
-        {/* <div className="sliders">
-          <div className="time-text">{labels[language].hours}:</div>
-          <InputSlider
-            className="u-slider-time"
-            xmin={0}
-            xmax={23}
-            x={moment.hour()}
-            onChange={this.changeHours}
-          />
-          <div className="time-text">{labels[language].minutes}:</div>
-          <InputSlider
-            className="u-slider-time"
-            xmin={0}
-            xmax={59}
-            x={moment.minute()}
-            onChange={this.changeMinutes}
-          />
-        </div> */}
       </TimeContainer>
     );
   }

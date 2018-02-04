@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { type DateTimeUnit } from 'luxon';
+import { type DateTime } from 'luxon';
 import Calendar from './Calendar';
 import Time from './Time';
 
@@ -24,12 +24,12 @@ const Options = styled.div`
 const Button = styled.button`
   float: left;
   width: 50%;
-  color: ${props => (props.active ? '#fff' : '#CC2262')};
-  background-color: ${props => (props.active ? '#CC2262' : 'transparent')};
+  color: ${props => (props.active ? '#fff' : '#00A15F')};
+  background-color: ${props => (props.active ? '#00A15F' : 'transparent')};
   text-align: center;
   font-size: 16px;
   padding: 7px;
-  border: 1px solid #CC2262;
+  border: 1px solid #00A15F;
   border-radius: 3px;
 
   &:first-child {
@@ -59,7 +59,7 @@ const OkButton = styled.button`
   display: block;
   margin-top: 10px;
   width: 100%;
-  background-color: #CC2262;
+  background-color: #00A15F;
   padding: 12px 0;
   text-align: center;
   color: #ffffff;
@@ -96,8 +96,8 @@ const labels = {
 
 type Props = {
   onChange: Function,
-  onSave: Function,
-  value: DateTimeUnit,
+  onClose: Function,
+  value: DateTime,
   language: Language,
 };
 
@@ -105,7 +105,7 @@ type State = {
   tab: 0 | 1,
 };
 
-class Form extends Component<Props, State> {
+class DateTimePicker extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -118,18 +118,12 @@ class Form extends Component<Props, State> {
     this.setState(() => ({ tab }));
   }
 
-  handleSave = (e: Event) => {
-    if (e) e.preventDefault();
-    this.props.onChange();
-    if (this.props.onSave) this.props.onSave();
-  }
-
   switchTabOne = (e: Event) => this.handleClickTab(0, e);
   switchTabTwo = (e: Event) => this.handleClickTab(1, e);
 
   render() {
     const { tab } = this.state;
-    const { moment, language } = this.props;
+    const { value, language } = this.props;
 
     return (
       <Container>
@@ -154,19 +148,19 @@ class Form extends Component<Props, State> {
           <Calendar
             language={this.props.language}
             visible={tab === 0}
-            moment={moment}
+            value={value}
             onChange={this.props.onChange}
             switchTab={this.switchTabTwo}
           />
           <Time
             language={this.props.language}
             visible={tab === 1}
-            moment={moment}
+            value={value}
             onChange={this.props.onChange}
           />
         </Tabs>
 
-        <OkButton type="button" className="ion-checkmark" onClick={this.handleSave}>
+        <OkButton type="button" className="ion-checkmark" onClick={this.props.onClose}>
           OK
         </OkButton>
       </Container>
@@ -174,4 +168,4 @@ class Form extends Component<Props, State> {
   }
 }
 
-export default Form;
+export default DateTimePicker;
