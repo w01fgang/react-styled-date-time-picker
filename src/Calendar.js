@@ -7,7 +7,7 @@ import chunk from 'lodash.chunk';
 import { type DateTime } from 'luxon';
 /** eslint-enable */
 import Day from './Day';
-
+// TODO: use intl to get week days
 const labels = {
   ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
   en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -83,7 +83,6 @@ class Calendar extends PureComponent<Props> {
     let date = value.set({ day: i });
     if (prevMonth) date = date.minus({ month: 1 });
     if (nextMonth) date = date.plus({ month: 1 });
-    console.log(date);
     
     this.props.onChange(date);
     this.props.switchTab();
@@ -118,11 +117,11 @@ class Calendar extends PureComponent<Props> {
       <CalendarContainer visible={visible}>
         <Toolbar>
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
-            <i className="ion-ios-arrow-left" />
+            {value.minus({ month: 1 }).monthLong}
           </ButtonPrev>
-          <CurrentDate>{value.toLocaleString({ year: 'numeric', month: 'numeric' })}</CurrentDate>
+          <CurrentDate>{value.toLocaleString({ month: 'long', year: 'numeric' })}</CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            <i className="ion-ios-arrow-right" />
+            {value.plus({ month: 1 }).monthLong}
           </ButtonNext>
         </Toolbar>
 
