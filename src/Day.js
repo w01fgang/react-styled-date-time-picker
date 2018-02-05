@@ -5,13 +5,18 @@ import styled from 'styled-components';
 /** eslint-enable */
 
 const Td = styled.td`
-  padding: 8px 0;
+  padding: 5px 0;
   text-align: center;
   cursor: pointer;
   color: ${props => (props.active ? '#f8f8f8' : '#191F26')};
   background-color: ${props => (props.active ? '#00A15F' : '#f8f8f8')};
   border: 1px solid #dfe0e4;
   font-weight: ${props => (props.active ? 'bold' : 'normal')};
+
+  &:hover {
+    background-color: #00A15F;
+    color: #f8f8f8;
+  }
 `;
 
 const DisabledTd = Td.extend`

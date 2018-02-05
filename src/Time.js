@@ -11,7 +11,7 @@ const TimeContainer = styled.div`
   display: ${props => (props.visible ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #f8f8f8;
   height: 320px;
   & div {
         user-select: none;
@@ -31,7 +31,8 @@ const Label = styled.span`
   background-color: #00A15F;
   border-radius: 3px;
   text-align: center;
-  font-family: Roboto;  
+  font-family: Roboto;
+  cursor: pointer;
 `;
 
 const Input = styled.input`
@@ -44,7 +45,7 @@ const Input = styled.input`
   border-radius: 3px;
   text-align: center;
   -webkit-appearance: none;
-  color: #fff;
+  color: #f8f8f8;
   border: 0;
   padding: 0;
   margin: 0;
@@ -70,6 +71,10 @@ const FlexRow = styled.div`
 
 const ArrowContainer = styled.span`
   margin: 0 16px;
+  
+  & svg {
+    cursor: pointer;
+  }
 `;
 
 const ArrowDownContainer = ArrowContainer.extend`

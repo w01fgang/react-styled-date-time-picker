@@ -26,7 +26,7 @@ const Options = styled.div`
 const Button = styled.button`
   float: left;
   width: 50%;
-  color: ${props => (props.active ? '#fff' : '#00A15F')};
+  color: ${props => (props.active ? '#f8f8f8' : '#00A15F')};
   background-color: ${props => (props.active ? '#00A15F' : 'transparent')};
   text-align: center;
   font-size: 16px;
@@ -64,7 +64,7 @@ const OkButton = styled.button`
   background-color: #00A15F;
   padding: 12px 0;
   text-align: center;
-  color: #ffffff;
+  color: #f8f8f8;
   font-size: 16px;
   border-radius: 3px;
 
