@@ -1,7 +1,9 @@
 // @flow
+/* eslint-disable import/no-unresolved, import/extensions */
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { type DateTime } from 'luxon';
+/** eslint-enable */
 import Calendar from './Calendar';
 import Time from './Time';
 

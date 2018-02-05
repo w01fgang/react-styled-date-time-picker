@@ -1,10 +1,11 @@
 // @flow
+/* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import range from 'lodash.range';
 import chunk from 'lodash.chunk';
 import { type DateTime } from 'luxon';
-
+/** eslint-enable */
 import Day from './Day';
 
 const labels = {

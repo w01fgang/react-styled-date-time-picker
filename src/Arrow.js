@@ -1,5 +1,6 @@
+/* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
-
+/** eslint-enable */
 class Arrow extends PureComponent { // eslint-disable-line
   render() {
     return (

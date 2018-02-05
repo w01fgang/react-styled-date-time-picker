@@ -1,7 +1,9 @@
 // @flow
+/* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import PageClick from 'react-page-click';
+/** eslint-enable */
 
 const Overlay = styled.div`
   position: fixed;

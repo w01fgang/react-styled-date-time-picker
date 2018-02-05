@@ -1,6 +1,8 @@
 // @flow
+/* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
 import { type DateTime } from 'luxon';
+/** eslint-enable */
 
 import Modal from './Modal';
 import DateTimePicker from './DateTimePicker';

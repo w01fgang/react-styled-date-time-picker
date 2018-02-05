@@ -1,6 +1,8 @@
 // @flow
+/* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
+/** eslint-enable */
 
 const Td = styled.td`
   padding: 8px 0;
