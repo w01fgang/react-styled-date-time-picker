@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack --watch",
     "build": "webpack",
-    "flow": "glow"
+    "flow": "glow",
+    "prepublish": "npx build"
   },
   "dependencies": {},
   "peerDependencies": {
