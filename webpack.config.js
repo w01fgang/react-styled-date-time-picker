@@ -36,5 +36,10 @@ module.exports = {
   },
   externals: {
     react: 'commonjs react', // this line is just to use the React dependency of our parent-testing-project instead of using our own React.
+    'styled-components': 'commonjs styled-components',
+    luxon: 'commonjs luxon',
+    'lodash.range': 'commonjs lodash.range',
+    'lodash.chunk': 'commonjs lodash.chunk',
+    'react-page-click': 'commonjs react-page-click',
   },
 };
