@@ -108,6 +108,9 @@ type State = {
 };
 
 class DateTimePicker extends Component<Props, State> {
+  static defaultProps = {
+    language: 'en',
+  }
   constructor(props: Props) {
     super(props);
     this.state = {
