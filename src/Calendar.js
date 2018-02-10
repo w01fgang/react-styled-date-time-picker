@@ -97,7 +97,7 @@ class Calendar extends PureComponent<Props> {
   }
 
   render() {
-    const { value, visible, locale } = this.props;
+    const { value, visible, language } = this.props;
     const d = value.day;
     const d1 = value.minus({ month: 1 }).endOf('month').day;
     const d2 = value.set({ day: 1 }).day;
@@ -124,7 +124,7 @@ class Calendar extends PureComponent<Props> {
         <Table>
           <thead>
             <tr>
-              {getWeeks(value.setLocale(locale)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
+              {getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
             </tr>
           </thead>
 
