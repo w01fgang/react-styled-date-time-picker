@@ -113,11 +113,11 @@ class Calendar extends PureComponent<Props> {
       <CalendarContainer visible={visible}>
         <Toolbar>
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
-            {value.minus({ month: 1 }).monthLong}
+            {value.minus({ month: 1 }).monthShort}
           </ButtonPrev>
           <CurrentDate>{value.toLocaleString({ month: 'long', year: 'numeric' })}</CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {value.plus({ month: 1 }).monthLong}
+            {value.plus({ month: 1 }).monthShort}
           </ButtonNext>
         </Toolbar>
 
