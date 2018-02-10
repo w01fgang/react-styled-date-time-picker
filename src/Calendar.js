@@ -7,13 +7,10 @@ import chunk from 'lodash.chunk';
 import { type DateTime } from 'luxon';
 /** eslint-enable */
 import Day from './Day';
-// TODO: use intl to get week days
-const labels = {
-  ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-  en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  es: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  pt: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  it: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+
+const getWeeks = (date: DateTime) => {
+  const firstDay = date.startOf('week');
+  return Array(7).fill(1).map((el, i) => firstDay.plus({ day: i }).weekdayShort);
 };
 
 const CalendarContainer = styled.div`
@@ -65,6 +62,7 @@ const Td = styled.td`
   font-weight: 700;
   text-transform: uppercase;
   font-size: 12px;
+  text-transform: capitalize;
 `;
 
 type Props = {
@@ -99,7 +97,7 @@ class Calendar extends PureComponent<Props> {
   }
 
   render() {
-    const { value, visible } = this.props;
+    const { value, visible, locale } = this.props;
     const d = value.day;
     const d1 = value.minus({ month: 1 }).endOf('month').day;
     const d2 = value.set({ day: 1 }).day;
@@ -110,8 +108,6 @@ class Calendar extends PureComponent<Props> {
       ...range(1, d3 + 1),
       ...range(1, (42 - d3 - d2) + 1),
     ];
-
-    const weeks = labels[this.props.language];
 
     return (
       <CalendarContainer visible={visible}>
@@ -128,7 +124,7 @@ class Calendar extends PureComponent<Props> {
         <Table>
           <thead>
             <tr>
-              {weeks.map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
+              {getWeeks(value.setLocale(locale)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
             </tr>
           </thead>
 
