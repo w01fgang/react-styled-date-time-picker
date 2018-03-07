@@ -21,9 +21,11 @@ class Picker extends PureComponent<Props> {
   handleChange = (date: Date) => {
     this.props.onChange(date);
   }
-  
+
   render() {
-    const { open, onClose, value, label, labelStyle } = this.props;
+    const {
+      open, onClose, value, label, labelStyle,
+    } = this.props;
     return open ?
       <Modal onClose={onClose}>
         <DateTimePicker
