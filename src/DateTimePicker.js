@@ -73,6 +73,12 @@ const OkButton = styled.button`
   }
 `;
 
+const Label = styled.div`
+  margin: 10px auto;
+  margin-top: 0;
+  text-align: center;
+`;
+
 const labels = {
   ru: {
     date: 'Дата',
@@ -101,6 +107,8 @@ type Props = {
   onClose: Function,
   value: DateTime,
   language: Language,
+  label: string,
+  labelStyle: Object
 };
 
 type State = {
@@ -126,12 +134,22 @@ class DateTimePicker extends Component<Props, State> {
   switchTabOne = (e: Event) => this.handleClickTab(0, e);
   switchTabTwo = (e: Event) => this.handleClickTab(1, e);
 
+  handleClose = () => {
+    this.setState({
+      tab: 0
+    });
+    this.props.onClose();
+  }
+
   render() {
     const { tab } = this.state;
-    const { value, language } = this.props;
+    const { value, language, label, labelStyle } = this.props;
 
     return (
       <Container>
+        { label &&
+          <Label style={labelStyle}>{label}</Label>
+        }
         <Options>
           <Button
             type="button"
@@ -165,7 +183,7 @@ class DateTimePicker extends Component<Props, State> {
           />
         </Tabs>
 
-        <OkButton type="button" className="ion-checkmark" onClick={this.props.onClose}>
+        <OkButton type="button" className="ion-checkmark" onClick={this.handleClose}>
           OK
         </OkButton>
       </Container>

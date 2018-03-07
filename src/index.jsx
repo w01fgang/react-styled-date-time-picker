@@ -9,10 +9,12 @@ import DateTimePicker from './DateTimePicker';
 
 type Props = {
   open: boolean,
+  label: string,
   value: DateTime,
   language: Language,
   onChange: Function,
   onClose: Function,
+  labelStyle: Object
 };
 
 class Picker extends PureComponent<Props> {
@@ -21,7 +23,7 @@ class Picker extends PureComponent<Props> {
   }
   
   render() {
-    const { open, onClose, value } = this.props;
+    const { open, onClose, value, label, labelStyle } = this.props;
     return open ?
       <Modal onClose={onClose}>
         <DateTimePicker
@@ -29,6 +31,8 @@ class Picker extends PureComponent<Props> {
           value={value}
           onChange={this.handleChange}
           onClose={onClose}
+          label={label}
+          labelStyle={labelStyle}
         />
       </Modal>
       :
