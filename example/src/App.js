@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { DateTime } from 'luxon';
 
-import DateTimePicker from '../../';
+import DateTimePicker from 'react-styled-date-time-picker';
 
 class App extends Component {
   state = {
