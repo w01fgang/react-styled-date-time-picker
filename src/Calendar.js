@@ -7,6 +7,7 @@ import chunk from 'lodash.chunk';
 import { type DateTime } from 'luxon';
 /** eslint-enable */
 import Day from './Day';
+import getDate from './GetDate';
 
 const getWeeks = (date: DateTime) => {
   const firstDay = date.startOf('week');
@@ -71,24 +72,19 @@ type Props = {
   value: DateTime,
   language: Language,
   visible: boolean,
+  markDate: DateTime,
 };
 
 class Calendar extends PureComponent<Props> {
-  selectDate = (i: number, w: number) => {
-    const prevMonth = (w === 0 && i > 7);
-    const nextMonth = (w >= 4 && i <= 14);
-    const { value } = this.props;
-    let date = value.set({ day: i });
-    if (prevMonth) date = date.minus({ month: 1 });
-    if (nextMonth) date = date.plus({ month: 1 });
-    
-    this.props.onChange(date);
-    this.props.switchTab();
+  state = {
+    overedDate: null,
   }
 
-  prevMonth = (e: Event) => {
-    e.preventDefault();
-    this.props.onChange(this.props.value.minus({ month: 1 }));
+  onMouseOver = (i: number, w: number) => {
+    const date = getDate(i, w, this.props.value);
+    this.setState({
+      overedDate: date,
+    });
   }
 
   nextMonth = (e: Event) => {
@@ -96,8 +92,21 @@ class Calendar extends PureComponent<Props> {
     this.props.onChange(this.props.value.plus({ month: 1 }));
   }
 
+  prevMonth = (e: Event) => {
+    e.preventDefault();
+    this.props.onChange(this.props.value.minus({ month: 1 }));
+  }
+
+  selectDate = (i: number, w: number) => {
+    const date = getDate(i, w, this.props.value);
+    this.props.onChange(date);
+    this.props.switchTab();
+  }
+
   render() {
-    const { value, visible, language } = this.props;
+    const {
+      value, visible, language, markDate,
+    } = this.props;
     const d = value.day;
     const d1 = value.minus({ month: 1 }).endOf('month').day;
     const d2 = value.set({ day: 1 }).day;
@@ -138,10 +147,14 @@ class Calendar extends PureComponent<Props> {
                     d={d}
                     w={w}
                     selectDate={this.selectDate}
+                    mouseOver={this.onMouseOver}
+                    markDate={markDate}
+                    overedDate={this.state.overedDate}
+                    value={value}
                   />
-                ))}
+                  ))}
               </tr>
-            ))}
+              ))}
           </tbody>
         </Table>
       </CalendarContainer>

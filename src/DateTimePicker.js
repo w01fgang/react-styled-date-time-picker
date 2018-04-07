@@ -108,7 +108,8 @@ type Props = {
   value: DateTime,
   language: Language,
   label: string,
-  labelStyle: Object
+  labelStyle: Object,
+  markDate: DateTime
 };
 
 type State = {
@@ -144,7 +145,7 @@ class DateTimePicker extends Component<Props, State> {
   render() {
     const { tab } = this.state;
     const {
-      value, language, label, labelStyle,
+      value, language, label, labelStyle, markDate,
     } = this.props;
 
     return (
@@ -176,6 +177,7 @@ class DateTimePicker extends Component<Props, State> {
             value={value}
             onChange={this.props.onChange}
             switchTab={this.switchTabTwo}
+            markDate={markDate}
           />
           <Time
             language={this.props.language}

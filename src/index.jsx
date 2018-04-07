@@ -14,7 +14,8 @@ type Props = {
   language: Language,
   onChange: Function,
   onClose: Function,
-  labelStyle: Object
+  labelStyle: Object,
+  markDate: DateTime,
 };
 
 class Picker extends PureComponent<Props> {
@@ -24,7 +25,7 @@ class Picker extends PureComponent<Props> {
 
   render() {
     const {
-      open, onClose, value, label, labelStyle,
+      open, onClose, value, label, labelStyle, markDate,
     } = this.props;
     return open ?
       <Modal onClose={onClose}>
@@ -35,6 +36,7 @@ class Picker extends PureComponent<Props> {
           onClose={onClose}
           label={label}
           labelStyle={labelStyle}
+          markDate={markDate}
         />
       </Modal>
       :
