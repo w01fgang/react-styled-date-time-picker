@@ -13,11 +13,11 @@ class Test extends Component {
       open: false,
     };
   }
-  
+
   setDate = (date) => this.setState(() => ({ date }));
-  
+
   togglePicker = () => this.setState(({ open }) => ({ open: !open }));
-  
+
   render(){
     return (
       <div>
@@ -32,6 +32,11 @@ class Test extends Component {
           onChange={this.setDate}
           onClose={this.togglePicker}
           language="ru"
+          label="Some Label"
+          labelStyle={{
+            fontSize: 20,
+            color: 'red',
+          }}
         />
       </div>
     );
@@ -40,6 +45,13 @@ class Test extends Component {
 
 export default Test;
 ```
+
+### Supported languages
+- Russian
+- English
+- Italian
+- Spanish
+- Portuguese
 
 ### Dependencies
 ```

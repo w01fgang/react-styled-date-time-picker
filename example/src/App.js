@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { DateTime } from 'luxon';
 
-import DateTimePicker from '../../';
+import DateTimePicker from 'react-styled-date-time-picker';
 
 class App extends Component {
   state = {
@@ -37,6 +37,11 @@ class App extends Component {
       returnOpen: false,
     });
   }
+
+  setDate = date => this.setState(() => ({ date }));
+
+  togglePicker = () => this.setState(state => ({ open: !state.open }));
+
   render() {
     const date = this.state.date.c;
     const reutnrDate = this.state.returnDate.c;
@@ -51,7 +56,7 @@ class App extends Component {
           Return Date: 
           {`${reutnrDate.day}.${reutnrDate.month}.${reutnrDate.year} ${reutnrDate.hour}:${reutnrDate.minute}`}
         </p>
-        <DateTimePicker 
+        <DateTimePicker
           open={this.state.open}
           value={this.state.date}
           onChange={this.setDate}
