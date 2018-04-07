@@ -43,7 +43,7 @@ const Button = styled.button`
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
-  
+
   &:focus {
     outline: none;
   }
@@ -136,14 +136,16 @@ class DateTimePicker extends Component<Props, State> {
 
   handleClose = () => {
     this.setState({
-      tab: 0
+      tab: 0,
     });
     this.props.onClose();
   }
 
   render() {
     const { tab } = this.state;
-    const { value, language, label, labelStyle } = this.props;
+    const {
+      value, language, label, labelStyle,
+    } = this.props;
 
     return (
       <Container>
