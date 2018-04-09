@@ -11,10 +11,13 @@ type Props = {
   open: boolean,
   label: string,
   value: DateTime,
+  returnValue: DateTime,
+  returnState: boolean,
   language: Language,
   onChange: Function,
   onClose: Function,
-  labelStyle: Object
+  labelStyle: Object,
+  previousDateToggle: boolean,
 };
 
 class Picker extends PureComponent<Props> {
@@ -24,7 +27,7 @@ class Picker extends PureComponent<Props> {
 
   render() {
     const {
-      open, onClose, value, label, labelStyle,
+      open, onClose, value, label, labelStyle, returnValue, returnState, previousDateToggle,
     } = this.props;
     return open ?
       <Modal onClose={onClose}>
@@ -35,6 +38,9 @@ class Picker extends PureComponent<Props> {
           onClose={onClose}
           label={label}
           labelStyle={labelStyle}
+          returnValue={returnValue}
+          returnState={returnState}
+          previousDateToggle={previousDateToggle}
         />
       </Modal>
       :

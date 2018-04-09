@@ -106,9 +106,12 @@ type Props = {
   onChange: Function,
   onClose: Function,
   value: DateTime,
+  returnValue: DateTime,
+  returnState: boolean,
   language: Language,
   label: string,
-  labelStyle: Object
+  labelStyle: Object,
+  previousDateToggle: boolean,
 };
 
 type State = {
@@ -144,7 +147,7 @@ class DateTimePicker extends Component<Props, State> {
   render() {
     const { tab } = this.state;
     const {
-      value, language, label, labelStyle,
+      value, language, label, labelStyle, returnValue, returnState, previousDateToggle,
     } = this.props;
 
     return (
@@ -176,12 +179,17 @@ class DateTimePicker extends Component<Props, State> {
             value={value}
             onChange={this.props.onChange}
             switchTab={this.switchTabTwo}
+            returnValue={returnValue}
+            returnState={returnState}
+            previousDateToggle={previousDateToggle}
           />
           <Time
             language={this.props.language}
             visible={tab === 1}
             value={value}
             onChange={this.props.onChange}
+            returnValue={returnValue}
+            returnState={returnState}
           />
         </Tabs>
 
