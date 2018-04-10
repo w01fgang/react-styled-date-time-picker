@@ -91,6 +91,8 @@ type Position = {
 type Props = {
   visible: boolean,
   value: DateTime,
+  returnValue: DateTime,
+  returnState: boolean,
   onChange: Function,
 };
 
@@ -109,17 +111,29 @@ class Time extends Component<Props, State> {
   }
  
   getHours = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    const { value } = this.props;
-    const date = value.set({ hours: parseInt(e.target.value, 10) });
-    this.props.onChange(date);
-    this.editHours();
+    const { value, returnValue, returnState } = this.props;
+    if (returnState) {
+      const date = returnValue.set({ hours: parseInt(e.target.value, 10) });
+      this.props.onChange(date);
+      this.editHours();
+    } else {
+      const date = value.set({ hours: parseInt(e.target.value, 10) });
+      this.props.onChange(date);
+      this.editHours();
+    }
   }
   
   getMinutes = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    const { value } = this.props;
-    const date = value.set({ minutes: parseInt(e.target.value, 10) });
-    this.props.onChange(date);
-    this.editMinutes();
+    const { value, returnValue, returnState } = this.props;
+    if (returnState) {
+      const date = returnValue.set({ minutes: parseInt(e.target.value, 10) });
+      this.props.onChange(date);
+      this.editMinutes();
+    } else {
+      const date = value.set({ minutes: parseInt(e.target.value, 10) });
+      this.props.onChange(date);
+      this.editMinutes();
+    }
   }
 
   editHours = () => {
@@ -142,42 +156,68 @@ class Time extends Component<Props, State> {
 
   changeMinutes = (pos: Position) => {
     this.setState(() => ({ editMinutes: false }));
-    const { value } = this.props;
-    const date = value.set({ minutes: parseInt(pos.x, 10) });
-    this.props.onChange(date);
+    const { value, returnValue, returnState } = this.props;
+    if (returnState) {
+      const date = returnValue.set({ minutes: parseInt(pos.x, 10) });
+      this.props.onChange(date);
+    } else {
+      const date = value.set({ minutes: parseInt(pos.x, 10) });
+      this.props.onChange(date);
+    }
   }
   
   changeHours = (pos: Position) => {
     this.setState(() => ({ editHours: false }));
-    const { value } = this.props;
-    const date = value.set({ hours: parseInt(pos.x, 10) });
-    this.props.onChange(date);
+    const { value, returnValue, returnState } = this.props;
+    if (returnState) {
+      const date = returnValue.set({ hours: parseInt(pos.x, 10) });
+      this.props.onChange(date);
+    } else {
+      const date = value.set({ hours: parseInt(pos.x, 10) });
+      this.props.onChange(date);
+    }
   }
 
   hoursUp = () => {
-    const { value, onChange } = this.props;
-    onChange(value.plus({ hour: 1 }));
+    const { value, returnValue, returnState, onChange } = this.props;
+    if (returnState) {
+      onChange(returnValue.plus({ hour: 1 }));
+    } else {
+      onChange(value.plus({ hour: 1 }));
+    }
   }
 
   hoursDown = () => {
-    const { value, onChange } = this.props;
-    onChange(value.minus({ hour: 1 }));
+    const { value, returnValue, returnState, onChange } = this.props;
+    if (returnState) {
+      onChange(returnValue.minus({ hour: 1 }));
+    } else {
+      onChange(value.minus({ hour: 1 }));
+    }
   }
 
   minutesUp = () => {
-    const { value, onChange } = this.props;
-    onChange(value.plus({ minute: 1 }));
+    const { value, returnValue, returnState, onChange } = this.props;
+    if (returnState) {
+      onChange(returnValue.plus({ minute: 1 }));
+    } else {
+      onChange(value.plus({ minute: 1 }));
+    }    
   }
 
   minutesDown = () => {
-    const { value, onChange } = this.props;
-    onChange(value.minus({ minute: 1 }));
+    const { value, returnValue, returnState, onChange } = this.props;
+    if (returnState) {
+      onChange(returnValue.minus({ minute: 1 }));
+    } else {
+      onChange(value.minus({ minute: 1 }));
+    }
   }
   
   render() {
     const { editHours, editMinutes } = this.state;
     
-    const { value, visible } = this.props;
+    const { value, returnValue, returnState, visible } = this.props;
     return (
       <TimeContainer visible={visible}>
         <TimeInputContainer>
@@ -192,7 +232,7 @@ class Time extends Component<Props, State> {
           <FlexRow>
             <Input
               type="text"
-              defaultValue={value.hour}
+              defaultValue={returnState ? returnValue.hour : value.hour}
               onBlur={this.getHours}
               min={0}
               max={23}
@@ -200,13 +240,13 @@ class Time extends Component<Props, State> {
               show={editHours}
             />
             <Label visible={!editHours} onClick={this.editHours}>
-              {value.hour}
+              {returnState ? returnValue.hour : value.hour}
             </Label>
             <Separater>:</Separater>
             <Input
               type="text"
               className="time"
-              defaultValue={value.minute}
+              defaultValue={returnState ? returnValue.minute : value.minute}
               onBlur={this.getMinutes}
               min={0}
               max={23}
@@ -214,7 +254,7 @@ class Time extends Component<Props, State> {
               show={editMinutes}
             />
             <Label visible={!editMinutes} onClick={this.editMinutes}>
-              {value.minute}
+              {returnState ? returnValue.minute : value.minute}
             </Label>
           </FlexRow>
           <FlexRow>

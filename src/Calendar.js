@@ -4,9 +4,10 @@ import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import range from 'lodash.range';
 import chunk from 'lodash.chunk';
-import { type DateTime } from 'luxon';
+import { DateTime } from 'luxon';
 /** eslint-enable */
 import Day from './Day';
+import getDate from './getDate';
 
 const getWeeks = (date: DateTime) => {
   const firstDay = date.startOf('week');
@@ -69,39 +70,76 @@ type Props = {
   onChange: Function,
   switchTab: Function,
   value: DateTime,
+  returnValue: DateTime,
+  returnState: boolean,
   language: Language,
   visible: boolean,
+  returnState: boolean,
+  previousDateToggle: boolean,
 };
 
 class Calendar extends PureComponent<Props> {
   selectDate = (i: number, w: number) => {
-    const prevMonth = (w === 0 && i > 7);
-    const nextMonth = (w >= 4 && i <= 14);
-    const { value } = this.props;
-    let date = value.set({ day: i });
-    if (prevMonth) date = date.minus({ month: 1 });
-    if (nextMonth) date = date.plus({ month: 1 });
-    
+    const { value, returnValue, returnState } = this.props;
+    let date;
+    if (returnState) {
+      date = getDate(i, w, returnValue);
+    } else {
+      date = getDate(i, w, value);
+    }
     this.props.onChange(date);
     this.props.switchTab();
   }
 
   prevMonth = (e: Event) => {
     e.preventDefault();
-    this.props.onChange(this.props.value.minus({ month: 1 }));
+    const { returnState, returnValue, value, previousDateToggle } = this.props;
+    if (returnState) {
+      if (previousDateToggle) {
+        const prevMonthDate = returnValue.minus({ month: 1 });
+        const currentDate = DateTime.local();
+        if (prevMonthDate.month < currentDate.month) {
+          return;
+        }
+      }
+      this.props.onChange(returnValue.minus({ month: 1 }));
+    } else {
+      if (previousDateToggle) {
+        const prevMonthDate = value.minus({ month: 1 });
+        const currentDate = DateTime.local();
+        if (prevMonthDate.month < currentDate.month) {
+          return;
+        }
+      }
+      this.props.onChange(value.minus({ month: 1 }));
+    }
   }
 
   nextMonth = (e: Event) => {
     e.preventDefault();
-    this.props.onChange(this.props.value.plus({ month: 1 }));
+    if (this.props.returnState) {
+      this.props.onChange(this.props.returnValue.plus({ month: 1 }));
+    } else {
+      this.props.onChange(this.props.value.plus({ month: 1 }));
+    }
   }
 
   render() {
-    const { value, visible, language } = this.props;
-    const d = value.day;
-    const d1 = value.minus({ month: 1 }).endOf('month').day;
-    const d2 = value.set({ day: 1 }).day;
-    const d3 = value.endOf('month').day;
+    const {
+      value, visible, language, returnValue, returnState,
+    } = this.props;
+    let d1;
+    let d2;
+    let d3;
+    if (returnState) {
+      d1 = returnValue.minus({ month: 1 }).endOf('month').day;
+      d2 = returnValue.set({ day: 1 }).day;
+      d3 = returnValue.endOf('month').day;
+    } else {
+      d1 = value.minus({ month: 1 }).endOf('month').day;
+      d2 = value.set({ day: 1 }).day;
+      d3 = value.endOf('month').day;
+    }
 
     const days = [
       ...range(d1 - (d2 + 1), d1 + 1),
@@ -113,18 +151,26 @@ class Calendar extends PureComponent<Props> {
       <CalendarContainer visible={visible}>
         <Toolbar>
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
-            {value.minus({ month: 1 }).monthShort}
+            {returnState ? returnValue.minus({ month: 1 }).monthShort : value.minus({ month: 1 }).monthShort}
           </ButtonPrev>
-          <CurrentDate>{value.toLocaleString({ month: 'long', year: 'numeric' })}</CurrentDate>
+          <CurrentDate>
+            {returnState ?
+              returnValue.toLocaleString({ month: 'long', year: 'numeric' }) :
+              value.toLocaleString({ month: 'long', year: 'numeric' })
+            }
+          </CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {value.plus({ month: 1 }).monthShort}
+            {returnState ? returnValue.plus({ month: 1 }).monthShort : value.plus({ month: 1 }).monthShort}
           </ButtonNext>
         </Toolbar>
 
         <Table>
           <thead>
             <tr>
-              {getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
+              {returnState ?
+                getWeeks(returnValue.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
+                getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
+              }
             </tr>
           </thead>
 
@@ -135,9 +181,11 @@ class Calendar extends PureComponent<Props> {
                   <Day
                     key={`day-${i + i}`}
                     i={i}
-                    d={d}
                     w={w}
+                    value={value}
                     selectDate={this.selectDate}
+                    returnValue={returnValue}
+                    returnState={returnState}
                   />
                 ))}
               </tr>
