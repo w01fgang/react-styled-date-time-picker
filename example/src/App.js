@@ -18,6 +18,7 @@ class App extends Component {
     } else {
       this.setState({
         date,
+        returnDate: date,
       });
     }
   }
@@ -30,7 +31,6 @@ class App extends Component {
     this.setState({
       open: true,
       returnState: false,
-      date: DateTime.local(),
     });
   }
   closeDatePickerAndOpenReturnDatePicker = () => {
