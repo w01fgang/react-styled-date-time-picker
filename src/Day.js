@@ -2,6 +2,7 @@
 /* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
+import { DateTime } from 'luxon';
 
 import getDate from './getDate';
 
@@ -62,7 +63,8 @@ class Day extends PureComponent<Props> {
       (currentDate.day === value.day && currentDate.month === value.month);
     
     if (returnValue && !selected) {
-      if (currentDate < value) {
+      const realDate = returnState ? value : DateTime.local();
+      if (currentDate < realDate) {
         return (
           <DisabledTd
             {...other}

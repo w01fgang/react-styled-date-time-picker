@@ -93,7 +93,9 @@ class Calendar extends PureComponent<Props> {
 
   prevMonth = (e: Event) => {
     e.preventDefault();
-    const { returnState, returnValue, value, previousDateToggle } = this.props;
+    const {
+      returnState, returnValue, value, previousDateToggle,
+    } = this.props;
     if (returnState) {
       if (previousDateToggle) {
         const prevMonthDate = returnValue.minus({ month: 1 });
