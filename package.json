@@ -1,6 +1,6 @@
 {
   "name": "react-styled-date-time-picker",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "build/index.js",
   "author": "w01fgang <sumin@unix-center.ru> (http://v-tour.pro/)",
   "license": "MIT",
