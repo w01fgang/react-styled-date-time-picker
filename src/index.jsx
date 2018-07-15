@@ -17,7 +17,6 @@ type Props = {
   onChange: Function,
   onClose: Function,
   labelStyle: Object,
-  previousDateToggle: boolean,
 };
 
 class Picker extends PureComponent<Props> {
@@ -27,7 +26,7 @@ class Picker extends PureComponent<Props> {
 
   render() {
     const {
-      open, onClose, value, label, labelStyle, returnValue, returnState, previousDateToggle,
+      open, onClose, value, label, labelStyle, returnValue, returnState,
     } = this.props;
     return open ?
       <Modal onClose={onClose}>
@@ -40,7 +39,6 @@ class Picker extends PureComponent<Props> {
           labelStyle={labelStyle}
           returnValue={returnValue}
           returnState={returnState}
-          previousDateToggle={previousDateToggle}
         />
       </Modal>
       :

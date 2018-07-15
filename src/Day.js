@@ -38,7 +38,6 @@ const DisabledTd = Td.extend`
 type Props = {
   i: number,
   w: number,
-  d: number,
   selectDate: Function,
   returnValue: DateTime,
   returnState: boolean,
@@ -50,18 +49,18 @@ class Day extends PureComponent<Props> {
     const { i, w, selectDate } = this.props;
     selectDate(i, w);
   }
-  
+
   render() {
     const {
-      i, w, selectDate, returnValue, value, returnState, ...other 
+      i, w, selectDate, returnValue, value, returnState, ...other
     } = this.props;
     const prevMonth = (w === 0 && i > 7);
     const nextMonth = (w >= 4 && i <= 14);
     const currentDate = getDate(i, w, returnState ? returnValue : value);
-    const selected = 
+    const selected =
       (currentDate.day === returnValue.day && currentDate.month === returnValue.month) ||
       (currentDate.day === value.day && currentDate.month === value.month);
-    
+
     if (returnValue && !selected) {
       const realDate = returnState ? value : DateTime.local();
       if (currentDate < realDate) {
@@ -75,9 +74,9 @@ class Day extends PureComponent<Props> {
       }
       if (currentDate > value && currentDate < returnValue) {
         return (
-          <Td 
+          <Td
             inRange
-            onClick={this.handleClick} 
+            onClick={this.handleClick}
             {...other}
           >
             {i}
@@ -99,9 +98,9 @@ class Day extends PureComponent<Props> {
     }
 
     return (
-      <Td 
-        active={selected} 
-        onClick={this.handleClick} 
+      <Td
+        active={selected}
+        onClick={this.handleClick}
         {...other}
       >
         {i}

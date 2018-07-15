@@ -65,9 +65,9 @@ class App extends Component {
           Open return DatePicker
         </button>
         <p>
-          Date: 
+          Date:
           {`${date.day}.${date.month}.${date.year} ${date.hour}:${date.minute}`} <br />
-          Return Date: 
+          Return Date:
           {`${returnDate.day}.${returnDate.month}.${returnDate.year} ${returnDate.hour}:${returnDate.minute}`}
         </p>
         <DateTimePicker
@@ -83,7 +83,6 @@ class App extends Component {
             color: 'black',
           }}
           returnState={this.state.returnState}
-          previousDateToggle
         />
       </div>
     );

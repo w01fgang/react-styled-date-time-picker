@@ -28,7 +28,7 @@ const Toolbar = styled.div`
 const ButtonNext = styled.button`
   color: #999999;
   float: right;
-  
+
   &:focus {
     outline: none;
   }
@@ -36,7 +36,7 @@ const ButtonNext = styled.button`
 const ButtonPrev = styled.button`
   color: #999999;
   float: left;
-  
+
   &:focus {
     outline: none;
   }
@@ -75,7 +75,6 @@ type Props = {
   language: Language,
   visible: boolean,
   returnState: boolean,
-  previousDateToggle: boolean,
 };
 
 class Calendar extends PureComponent<Props> {
@@ -94,25 +93,11 @@ class Calendar extends PureComponent<Props> {
   prevMonth = (e: Event) => {
     e.preventDefault();
     const {
-      returnState, returnValue, value, previousDateToggle,
+      returnState, returnValue, value,
     } = this.props;
     if (returnState) {
-      if (previousDateToggle) {
-        const prevMonthDate = returnValue.minus({ month: 1 });
-        const currentDate = DateTime.local();
-        if (prevMonthDate.month < currentDate.month) {
-          return;
-        }
-      }
       this.props.onChange(returnValue.minus({ month: 1 }));
     } else {
-      if (previousDateToggle) {
-        const prevMonthDate = value.minus({ month: 1 });
-        const currentDate = DateTime.local();
-        if (prevMonthDate.month < currentDate.month) {
-          return;
-        }
-      }
       this.props.onChange(value.minus({ month: 1 }));
     }
   }
