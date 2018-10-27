@@ -71,13 +71,13 @@ const FlexRow = styled.div`
 
 const ArrowContainer = styled.span`
   margin: 0 16px;
-  
+
   & svg {
     cursor: pointer;
   }
 `;
 
-const ArrowDownContainer = ArrowContainer.extend`
+const ArrowDownContainer = styled(ArrowContainer)`
   & svg {
     transform: rotate(180deg);
   }
@@ -109,7 +109,7 @@ class Time extends Component<Props, State> {
       editMinutes: false,
     };
   }
- 
+
   getHours = (e: SyntheticInputEvent<HTMLInputElement>) => {
     const { value, returnValue, returnState } = this.props;
     if (returnState) {
@@ -122,7 +122,7 @@ class Time extends Component<Props, State> {
       this.editHours();
     }
   }
-  
+
   getMinutes = (e: SyntheticInputEvent<HTMLInputElement>) => {
     const { value, returnValue, returnState } = this.props;
     if (returnState) {
@@ -138,7 +138,7 @@ class Time extends Component<Props, State> {
 
   editHours = () => {
     this.setState({ editHours: !this.state.editHours });
-    
+
     setTimeout(() => {
       if (this.hours) this.hours.focus();
     }, 0);
@@ -165,7 +165,7 @@ class Time extends Component<Props, State> {
       this.props.onChange(date);
     }
   }
-  
+
   changeHours = (pos: Position) => {
     this.setState(() => ({ editHours: false }));
     const { value, returnValue, returnState } = this.props;
@@ -202,7 +202,7 @@ class Time extends Component<Props, State> {
       onChange(returnValue.plus({ minute: 1 }));
     } else {
       onChange(value.plus({ minute: 1 }));
-    }    
+    }
   }
 
   minutesDown = () => {
@@ -213,10 +213,10 @@ class Time extends Component<Props, State> {
       onChange(value.minus({ minute: 1 }));
     }
   }
-  
+
   render() {
     const { editHours, editMinutes } = this.state;
-    
+
     const { value, returnValue, returnState, visible } = this.props;
     return (
       <TimeContainer visible={visible}>

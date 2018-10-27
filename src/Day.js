@@ -31,7 +31,7 @@ const Td = styled.td`
   }
 `;
 
-const DisabledTd = Td.extend`
+const DisabledTd = styled(Td)`
   color: #999;
 `;
 
