@@ -83,6 +83,12 @@ const ArrowDownContainer = styled(ArrowContainer)`
   }
 `;
 
+const addZeroInFront = (value: number): string => (
+  value >= 0 && value < 10
+    ? `0${value}`
+    : String(value)
+);
+
 type Position = {
   x: number,
   y: number,
@@ -216,8 +222,8 @@ class Time extends Component<Props, State> {
 
   render() {
     const { editHours, editMinutes } = this.state;
-
     const { value, returnValue, returnState, visible } = this.props;
+
     return (
       <TimeContainer visible={visible}>
         <TimeInputContainer>
@@ -254,7 +260,9 @@ class Time extends Component<Props, State> {
               show={editMinutes}
             />
             <Label visible={!editMinutes} onClick={this.editMinutes}>
-              {returnState ? returnValue.minute : value.minute}
+              {returnState
+                ? addZeroInFront(returnValue.minute)
+                : addZeroInFront(value.minute)}
             </Label>
           </FlexRow>
           <FlexRow>

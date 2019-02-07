@@ -2,7 +2,7 @@
 /* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import PageClick from 'react-page-click';
+import { ReactPageClick } from 'react-page-click';
 /** eslint-enable */
 
 const Overlay = styled.div`
@@ -12,7 +12,7 @@ const Overlay = styled.div`
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 1000
+  z-index: 1000;
 `;
 
 const Popup = styled.div`
@@ -29,6 +29,7 @@ const Popup = styled.div`
 const Content = styled.div`
   padding: 0;
 `;
+
 type Props = {
   onClose: Function,
 };
@@ -40,11 +41,11 @@ class Modal extends PureComponent<Props> {
     return (
       <div>
         <Overlay />
-        <PageClick onClick={onClose}>
+        <ReactPageClick notify={onClose}>
           <Popup>
             <Content {...props} />
           </Popup>
-        </PageClick>
+        </ReactPageClick>
       </div>
     );
   }
