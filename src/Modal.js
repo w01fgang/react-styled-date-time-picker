@@ -30,18 +30,21 @@ const Content = styled.div`
   padding: 0;
 `;
 
+const noop = () => {};
+
 type Props = {
   onClose: Function,
+  closeOnOutsideClick: boolean,
 };
 
 class Modal extends PureComponent<Props> {
   render() {
-    const { onClose, ...props } = this.props;
+    const { onClose, closeOnOutsideClick, ...props } = this.props;
 
     return (
       <div>
         <Overlay />
-        <ReactPageClick notify={onClose}>
+        <ReactPageClick notify={closeOnOutsideClick ? onClose : noop}>
           <Popup>
             <Content {...props} />
           </Popup>

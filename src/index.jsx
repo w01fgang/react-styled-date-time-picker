@@ -18,22 +18,24 @@ type Props = {
   onSelect?: Function, // on OK click
   onClose: Function, // on Cancel or outside click
   labelStyle: Object,
+  closeOnOutsideClick?: boolean,
 };
 
 class Picker extends PureComponent<Props> {
   static defaultProps = {
     onSelect: () => {},
+    closeOnOutsideClick: true,
   }
 
   render() {
     const {
       open, onClose, onChange, onSelect, value, label, labelStyle, returnValue,
-      returnState, language,
+      returnState, language, closeOnOutsideClick,
     } = this.props;
 
     return open
       ? (
-        <Modal onClose={onClose}>
+        <Modal closeOnOutsideClick={closeOnOutsideClick} onClose={onClose}>
           <DateTimePicker
             language={language}
             value={value}

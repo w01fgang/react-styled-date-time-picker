@@ -79,26 +79,31 @@ type Props = {
 
 class Calendar extends PureComponent<Props> {
   selectDate = (i: number, w: number) => {
-    const { value, returnValue, returnState } = this.props;
+    const {
+      value, returnValue, returnState, onChange, switchTab,
+    } = this.props;
     let date;
     if (returnState) {
       date = getDate(i, w, returnValue);
     } else {
       date = getDate(i, w, value);
     }
-    this.props.onChange(date);
-    this.props.switchTab();
+    const options = onChange(date);
+
+    if (!options || options.switchTab) {
+      switchTab();
+    }
   }
 
   prevMonth = (e: Event) => {
     e.preventDefault();
     const {
-      returnState, returnValue, value,
+      returnState, returnValue, value, onChange,
     } = this.props;
     if (returnState) {
-      this.props.onChange(returnValue.minus({ month: 1 }));
+      onChange(returnValue.minus({ month: 1 }));
     } else {
-      this.props.onChange(value.minus({ month: 1 }));
+      onChange(value.minus({ month: 1 }));
     }
   }
 

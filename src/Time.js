@@ -242,7 +242,7 @@ class Time extends Component<Props, State> {
               onBlur={this.getHours}
               min={0}
               max={23}
-              innerRef={(node) => { this.hours = node; }}
+              ref={(node) => { this.hours = node; }}
               show={editHours}
             />
             <Label visible={!editHours} onClick={this.editHours}>
@@ -256,7 +256,7 @@ class Time extends Component<Props, State> {
               onBlur={this.getMinutes}
               min={0}
               max={23}
-              innerRef={(node) => { this.minutes = node; }}
+              ref={(node) => { this.minutes = node; }}
               show={editMinutes}
             />
             <Label visible={!editMinutes} onClick={this.editMinutes}>

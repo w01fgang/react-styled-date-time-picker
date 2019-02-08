@@ -141,13 +141,13 @@ class DateTimePicker extends Component<Props, State> {
 
   switchTabTwo = (e: Event) => this.handleClickTab(1, e);
 
-  handleChange = (date: DateTime) => {
+  handleChange = (date: DateTime): ?Object => {
     const { onChange } = this.props;
 
     this.setState({
       date,
     });
-    onChange(date);
+    return onChange(date);
   }
 
   handleConfirmClick = () => {
