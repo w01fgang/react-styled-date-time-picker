@@ -53,7 +53,7 @@ const Tabs = styled.div`
   margin-bottom: 11px;
 `;
 
-const OkButton = styled.button`
+const MainButton = styled.button`
   border: 0;
   outline: 0;
   cursor: pointer;
@@ -104,27 +104,31 @@ const labels = {
 
 type Props = {
   onChange: Function,
+  onSelect: Function,
   onClose: Function,
   value: DateTime,
   returnValue: DateTime,
   returnState: boolean,
-  language: Language,
+  language?: Language,
   label: string,
   labelStyle: Object,
 };
 
 type State = {
   tab: 0 | 1,
+  date: DateTime,
 };
 
 class DateTimePicker extends Component<Props, State> {
   static defaultProps = {
     language: 'en',
   }
+
   constructor(props: Props) {
     super(props);
     this.state = {
       tab: 0,
+      date: props.value,
     };
   }
 
@@ -134,13 +138,35 @@ class DateTimePicker extends Component<Props, State> {
   }
 
   switchTabOne = (e: Event) => this.handleClickTab(0, e);
+
   switchTabTwo = (e: Event) => this.handleClickTab(1, e);
 
-  handleClose = () => {
+  handleChange = (date: DateTime): ?Object => {
+    const { onChange } = this.props;
+
+    this.setState({
+      date,
+    });
+    return onChange(date);
+  }
+
+  handleConfirmClick = () => {
+    const { onSelect } = this.props;
+    const { date } = this.state;
+
     this.setState({
       tab: 0,
     });
-    this.props.onClose();
+    onSelect(date);
+  }
+
+  handleCancelClick = () => {
+    const { onClose } = this.props;
+
+    this.setState({
+      tab: 0,
+    });
+    onClose();
   }
 
   render() {
@@ -151,8 +177,8 @@ class DateTimePicker extends Component<Props, State> {
 
     return (
       <Container>
-        { label &&
-          <Label style={labelStyle}>{label}</Label>
+        { label
+          && <Label style={labelStyle}>{label}</Label>
         }
         <Options>
           <Button
@@ -173,27 +199,38 @@ class DateTimePicker extends Component<Props, State> {
 
         <Tabs>
           <Calendar
-            language={this.props.language}
+            language={language}
             visible={tab === 0}
             value={value}
-            onChange={this.props.onChange}
+            onChange={this.handleChange}
             switchTab={this.switchTabTwo}
             returnValue={returnValue}
             returnState={returnState}
           />
           <Time
-            language={this.props.language}
+            language={language}
             visible={tab === 1}
             value={value}
-            onChange={this.props.onChange}
+            onChange={this.handleChange}
             returnValue={returnValue}
             returnState={returnState}
           />
         </Tabs>
 
-        <OkButton type="button" className="ion-checkmark" onClick={this.handleClose}>
+        <MainButton
+          type="button"
+          className="ion-checkmark"
+          onClick={this.handleConfirmClick}
+        >
           OK
-        </OkButton>
+        </MainButton>
+        <MainButton
+          type="button"
+          className="ion-checkmark"
+          onClick={this.handleCancelClick}
+        >
+          Cancel
+        </MainButton>
       </Container>
     );
   }
