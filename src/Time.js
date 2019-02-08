@@ -238,6 +238,7 @@ class Time extends Component<Props, State> {
           <FlexRow>
             <Input
               type="text"
+              key={1}
               defaultValue={returnState ? returnValue.hour : value.hour}
               onBlur={this.getHours}
               min={0}
@@ -251,6 +252,7 @@ class Time extends Component<Props, State> {
             <Separater>:</Separater>
             <Input
               type="text"
+              key={2}
               className="time"
               defaultValue={returnState ? returnValue.minute : value.minute}
               onBlur={this.getMinutes}
