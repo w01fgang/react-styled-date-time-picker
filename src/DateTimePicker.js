@@ -14,7 +14,7 @@ const Container = styled.div`
   border-radius: 3px;
   border: 1px solid #dfe0e4;
   margin-top: 20px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 1);
 `;
 
 const Options = styled.div`
