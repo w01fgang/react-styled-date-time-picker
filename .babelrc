@@ -1,0 +1,19 @@
+{
+  "presets": ["env", "flow", "react"],
+  "plugins": [
+    [
+      "transform-class-properties",
+      "styled-components",
+      { "ssr": false, "displayName": true, "preprocess": true } ],
+      "transform-es2015-modules-commonjs",
+      "transform-react-inline-elements",
+      "transform-react-pure-class-to-function",
+      "transform-react-remove-prop-types",
+      [
+        "transform-object-rest-spread",
+        {
+          "useBuiltIns": true
+        }
+      ]
+    ]
+}
