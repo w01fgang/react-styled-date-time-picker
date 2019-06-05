@@ -80,7 +80,7 @@ type Props = {
 class Calendar extends PureComponent<Props> {
   selectDate = (i: number, w: number) => {
     const {
-      value, returnValue, returnState, onChange, switchTab,
+      value, returnValue, returnState, onChange, switchTab, onSelect
     } = this.props;
     let date;
     if (returnState) {
@@ -90,8 +90,11 @@ class Calendar extends PureComponent<Props> {
     }
     const options = onChange(date);
 
-    if (!options || options.switchTab) {
+    if ((!options || options.switchTab) && !returnState) {
+      onSelect();
+    } else {
       switchTab();
+      onSelect();
     }
   }
 

@@ -151,13 +151,13 @@ class DateTimePicker extends Component<Props, State> {
   }
 
   handleConfirmClick = () => {
-    const { onSelect } = this.props;
-    const { date } = this.state;
+    const { onSelect, returnState, onClose } = this.props;
+    const { date, tab } = this.state;
 
-    this.setState({
-      tab: 0,
-    });
     onSelect(date);
+    if (tab === 1 && returnState) {
+      onClose();
+    }
   }
 
   handleCancelClick = () => {
@@ -204,6 +204,7 @@ class DateTimePicker extends Component<Props, State> {
             value={value}
             onChange={this.handleChange}
             switchTab={this.switchTabTwo}
+            onSelect={this.handleConfirmClick}
             returnValue={returnValue}
             returnState={returnState}
           />
