@@ -7,17 +7,6 @@ import { type DateTime } from 'luxon';
 
 import Arrow from './Arrow';
 
-const TimeContainer = styled.div`
-  display: ${props => (props.visible ? 'flex' : 'none')};
-  align-items: center;
-  justify-content: center;
-  color: #f8f8f8;
-  height: 320px;
-  & div {
-        user-select: none;
-  }
-`;
-
 const TimeInputContainer = styled.div`
   text-align: center;
 `;
@@ -241,7 +230,7 @@ class Time extends Component<Props, State> {
 
   render() {
     const { editHours, editMinutes } = this.state;
-    const { value, returnValue, returnState, index, selected } = this.props;
+    const { value, index, selected } = this.props;
 
     return (
         <TimeInputContainer>

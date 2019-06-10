@@ -171,7 +171,7 @@ class DateTimePicker extends Component<Props, State> {
       onClose();
     }
 
-    this.props.onSelect();
+    onSelect();
   }
 
   render() {

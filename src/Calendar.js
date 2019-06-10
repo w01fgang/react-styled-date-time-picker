@@ -191,7 +191,6 @@ class Calendar extends PureComponent<Props> {
       ...ds,
       ...range(1, d4 + 1),
     ]
-    let rand = Math.random();
     return (
       <CalendarContainer visible={visible}>
         <Toolbar>
