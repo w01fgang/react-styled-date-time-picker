@@ -19,9 +19,9 @@ const Popup = styled.div`
   position: fixed;
   top: 5%;
   left: 50%;
-  width: 302px;
+  width: 649px;
   height: 477px;
-  margin-left: -151px;
+  margin-left: -324.5px;
   border-radius: 5;
   z-index: 1001;
 `;

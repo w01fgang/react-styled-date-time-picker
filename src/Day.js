@@ -54,14 +54,12 @@ class Day extends PureComponent<Props> {
     const {
       i, w, selectDate, returnValue, value, returnState, ...other
     } = this.props;
-    const prevMonth = (w === 0 && i > 7);
-    const nextMonth = (w >= 4 && i <= 14);
     const currentDate = getDate(i, w, returnState ? returnValue : value);
     const selected =
-      (currentDate.day === returnValue.day && currentDate.month === returnValue.month) ||
-      (currentDate.day === value.day && currentDate.month === value.month);
+      (currentDate.day === returnValue.day && currentDate.month === returnValue.month && i != null) ||
+      (currentDate.day === value.day && currentDate.month === value.month && i != null);
 
-    if (returnValue && !selected) {
+    if (returnValue && !selected && i != null) {
       const realDate = returnState ? value : DateTime.local();
       if (currentDate < realDate) {
         return (
@@ -84,28 +82,22 @@ class Day extends PureComponent<Props> {
         );
       }
     }
-
-    if (prevMonth || nextMonth) {
+    
+    if (i != null) {
       return (
-        <DisabledTd
+        <Td
           active={selected}
           onClick={this.handleClick}
           {...other}
         >
           {i}
-        </DisabledTd>
+        </Td>
       );
+    } else {
+      return (
+        <td></td>
+      )
     }
-
-    return (
-      <Td
-        active={selected}
-        onClick={this.handleClick}
-        {...other}
-      >
-        {i}
-      </Td>
-    );
   }
 }
 

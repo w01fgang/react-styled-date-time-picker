@@ -83,6 +83,33 @@ const ArrowDownContainer = styled(ArrowContainer)`
   }
 `;
 
+const MainButton = styled.button`
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  line-height: 1;
+  display: block;
+  margin-top: 10px;
+  width: 100%;
+  background-color: #00A15F;
+  padding: 12px 0;
+  text-align: center;
+  color: #f8f8f8;
+  font-size: 16px;
+  border-radius: 3px;
+  visibility: ${(props) => {
+    if (props.selected === props.index) {
+      return 'unset';
+    } else {
+      return 'hidden'
+    }
+  }};
+
+  &:before {
+    margin-right: 6px;
+  }
+`;
+
 const addZeroInFront = (value: number): string => (
   value >= 0 && value < 10
     ? `0${value}`
@@ -104,7 +131,7 @@ type Props = {
 
 type State = {
   editHours: boolean,
-  editMinutes: boolean,
+  editMinutes: boolean
 };
 
 class Time extends Component<Props, State> {
@@ -112,7 +139,7 @@ class Time extends Component<Props, State> {
     super(props);
     this.state = {
       editHours: false,
-      editMinutes: false,
+      editMinutes: false
     };
   }
 
@@ -185,47 +212,38 @@ class Time extends Component<Props, State> {
   }
 
   hoursUp = () => {
-    const { value, returnValue, returnState, onChange } = this.props;
-    if (returnState) {
-      onChange(returnValue.plus({ hour: 1 }));
-    } else {
+    const { value, onChange, selected, index } = this.props;
+    if (selected === index)
       onChange(value.plus({ hour: 1 }));
-    }
   }
 
   hoursDown = () => {
-    const { value, returnValue, returnState, onChange } = this.props;
-    if (returnState) {
-      onChange(returnValue.minus({ hour: 1 }));
-    } else {
+    const { value, onChange, selected, index } = this.props;
+    if (selected === index)
       onChange(value.minus({ hour: 1 }));
-    }
+  }
+
+  handleSelectTime = () => {
+    this.props.changeSelectedTime();
   }
 
   minutesUp = () => {
-    const { value, returnValue, returnState, onChange } = this.props;
-    if (returnState) {
-      onChange(returnValue.plus({ minute: 1 }));
-    } else {
+    const { value, onChange, selected, index } = this.props;
+    if (selected === index)
       onChange(value.plus({ minute: 1 }));
-    }
   }
 
   minutesDown = () => {
-    const { value, returnValue, returnState, onChange } = this.props;
-    if (returnState) {
-      onChange(returnValue.minus({ minute: 1 }));
-    } else {
+    const { value, onChange, selected, index } = this.props;
+    if (selected === index)
       onChange(value.minus({ minute: 1 }));
-    }
   }
 
   render() {
     const { editHours, editMinutes } = this.state;
-    const { value, returnValue, returnState, visible } = this.props;
+    const { value, returnValue, returnState, index, selected } = this.props;
 
     return (
-      <TimeContainer visible={visible}>
         <TimeInputContainer>
           <FlexRow>
             <ArrowContainer>
@@ -239,7 +257,7 @@ class Time extends Component<Props, State> {
             <Input
               type="text"
               key={1}
-              defaultValue={returnState ? returnValue.hour : value.hour}
+              defaultValue={value.hour}
               onBlur={this.getHours}
               min={0}
               max={23}
@@ -247,14 +265,14 @@ class Time extends Component<Props, State> {
               show={editHours}
             />
             <Label visible={!editHours} onClick={this.editHours}>
-              {returnState ? returnValue.hour : value.hour}
+              {value.hour}
             </Label>
             <Separater>:</Separater>
             <Input
               type="text"
               key={2}
               className="time"
-              defaultValue={returnState ? returnValue.minute : value.minute}
+              defaultValue={value.minute}
               onBlur={this.getMinutes}
               min={0}
               max={23}
@@ -262,9 +280,7 @@ class Time extends Component<Props, State> {
               show={editMinutes}
             />
             <Label visible={!editMinutes} onClick={this.editMinutes}>
-              {returnState
-                ? addZeroInFront(returnValue.minute)
-                : addZeroInFront(value.minute)}
+              {addZeroInFront(value.minute)}
             </Label>
           </FlexRow>
           <FlexRow>
@@ -275,8 +291,16 @@ class Time extends Component<Props, State> {
               <Arrow height="65" width="65" onClick={this.minutesDown} />
             </ArrowDownContainer>
           </FlexRow>
+          <MainButton
+              type="button"
+              selected={selected}
+              index={index}
+              className="ion-checkmark"
+              onClick={this.handleSelectTime}
+            >
+              OK
+          </MainButton>
         </TimeInputContainer>
-      </TimeContainer>
     );
   }
 }

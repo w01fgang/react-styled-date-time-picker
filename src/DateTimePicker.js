@@ -9,12 +9,23 @@ import Time from './Time';
 
 const Container = styled.div`
   display: inline-block;
-  width: 270px;
+  width: 585px;
   padding: 12px 15px;
   border-radius: 3px;
   border: 1px solid #dfe0e4;
   margin-top: 20px;
   background: rgba(255, 255, 255, 1);
+`;
+
+const TimeContainer = styled.div`
+  display: ${props => (props.visible ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: space-around;
+  color: #f8f8f8;
+  height: 320px;
+  & div {
+        user-select: none;
+  }
 `;
 
 const Options = styled.div`
@@ -51,26 +62,6 @@ const Button = styled.button`
 
 const Tabs = styled.div`
   margin-bottom: 11px;
-`;
-
-const MainButton = styled.button`
-  border: 0;
-  outline: 0;
-  cursor: pointer;
-  line-height: 1;
-  display: block;
-  margin-top: 10px;
-  width: 100%;
-  background-color: #00A15F;
-  padding: 12px 0;
-  text-align: center;
-  color: #f8f8f8;
-  font-size: 16px;
-  border-radius: 3px;
-
-  &:before {
-    margin-right: 6px;
-  }
 `;
 
 const Label = styled.div`
@@ -117,6 +108,7 @@ type Props = {
 type State = {
   tab: 0 | 1,
   date: DateTime,
+  selectedTime: integer
 };
 
 class DateTimePicker extends Component<Props, State> {
@@ -129,6 +121,7 @@ class DateTimePicker extends Component<Props, State> {
     this.state = {
       tab: 0,
       date: props.value,
+      selectedTime: 1
     };
   }
 
@@ -169,12 +162,23 @@ class DateTimePicker extends Component<Props, State> {
     onClose();
   }
 
+  changeSelectedTime = () => {
+    const { onClose, onSelect } = this.props
+    if (this.state.selectedTime === 1) {
+      this.setState({selectedTime: 2})
+    } else {
+      this.setState({selectedTime: 1})
+      onClose();
+    }
+
+    this.props.onSelect();
+  }
+
   render() {
-    const { tab } = this.state;
+    const { tab, selectedTime } = this.state;
     const {
       value, language, label, labelStyle, returnValue, returnState,
     } = this.props;
-
     return (
       <Container>
         { label
@@ -207,7 +211,11 @@ class DateTimePicker extends Component<Props, State> {
             onSelect={this.handleConfirmClick}
             returnValue={returnValue}
             returnState={returnState}
+            handleConfirmClick={this.handleConfirmClick}
+            handleCancelClick={this.handleCancelClick}
           />
+
+        <TimeContainer visible={tab === 1}>
           <Time
             language={language}
             visible={tab === 1}
@@ -215,23 +223,24 @@ class DateTimePicker extends Component<Props, State> {
             onChange={this.handleChange}
             returnValue={returnValue}
             returnState={returnState}
+            changeSelectedTime={this.changeSelectedTime}
+            selected={selectedTime}
+            index={1}
           />
-        </Tabs>
 
-        <MainButton
-          type="button"
-          className="ion-checkmark"
-          onClick={this.handleConfirmClick}
-        >
-          OK
-        </MainButton>
-        <MainButton
-          type="button"
-          className="ion-checkmark"
-          onClick={this.handleCancelClick}
-        >
-          Cancel
-        </MainButton>
+          <Time
+            language={language}
+            visible={tab === 1}
+            value={returnValue}
+            onChange={this.handleChange}
+            returnValue={returnValue}
+            returnState={returnState}
+            changeSelectedTime={this.changeSelectedTime}
+            selected={selectedTime}
+            index={2}
+          />
+        </TimeContainer>
+        </Tabs>
       </Container>
     );
   }

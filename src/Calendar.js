@@ -23,11 +23,12 @@ const Toolbar = styled.div`
   color: #00A15F;
   text-align: center;
   margin-bottom: 13px;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const ButtonNext = styled.button`
   color: #999999;
-  float: right;
 
   &:focus {
     outline: none;
@@ -35,7 +36,6 @@ const ButtonNext = styled.button`
 `;
 const ButtonPrev = styled.button`
   color: #999999;
-  float: left;
 
   &:focus {
     outline: none;
@@ -47,10 +47,16 @@ const CurrentDate = styled.span`
 `;
 
 const Table = styled.table`
-  width: 100%;
+  width: 270px;
   border-collapse: collapse;
   border-spacing: 0;
   table-layout: fixed;
+`;
+
+const TableContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Td = styled.td`
@@ -64,6 +70,29 @@ const Td = styled.td`
   text-transform: uppercase;
   font-size: 12px;
   text-transform: capitalize;
+`;
+
+const TableBContainer = styled.div`
+
+`
+const MainButton = styled.button`
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  line-height: 1;
+  display: block;
+  margin-top: 10px;
+  width: 100%;
+  background-color: #00A15F;
+  padding: 12px 0;
+  text-align: center;
+  color: #f8f8f8;
+  font-size: 16px;
+  border-radius: 3px;
+
+  &:before {
+    margin-right: 6px;
+  }
 `;
 
 type Props = {
@@ -104,44 +133,65 @@ class Calendar extends PureComponent<Props> {
       returnState, returnValue, value, onChange,
     } = this.props;
     if (returnState) {
-      onChange(returnValue.minus({ month: 1 }));
+      onChange(returnValue.minus({ month: 2 }));
     } else {
-      onChange(value.minus({ month: 1 }));
+      onChange(value.minus({ month: 2 }));
     }
   }
 
   nextMonth = (e: Event) => {
     e.preventDefault();
     if (this.props.returnState) {
-      this.props.onChange(this.props.returnValue.plus({ month: 1 }));
+      this.props.onChange(this.props.returnValue.plus({ month: 2 }));
     } else {
-      this.props.onChange(this.props.value.plus({ month: 1 }));
+      this.props.onChange(this.props.value.plus({ month: 2 }));
     }
+  }
+
+  handleConfirmClick = () => {
+    this.props.handleConfirmClick()
+  }
+
+  handleCancelClick = () => {
+    this.props.handleCancelClick()
   }
 
   render() {
     const {
       value, visible, language, returnValue, returnState,
     } = this.props;
-    let d1;
-    let d2;
     let d3;
+    let d4;
+    let d5;
+    let d6;
     if (returnState) {
-      d1 = returnValue.minus({ month: 1 }).endOf('month').day;
-      d2 = returnValue.set({ day: 1 }).day;
       d3 = returnValue.endOf('month').day;
+      d4 = returnValue.plus({ month: 1 }).endOf('month').day;
     } else {
-      d1 = value.minus({ month: 1 }).endOf('month').day;
-      d2 = value.set({ day: 1 }).day;
       d3 = value.endOf('month').day;
+      d4 = value.plus({ month: 1 }).endOf('month').day;
     }
-
+    
+    d5 = value.set({ day: 1 }).weekday
+    d6 = returnValue.plus({month: 1}).set({ day: 1 }).weekday
+    let dd = [];
+    let ds = [];
+    for (let i = 0; i < d5 - 1; i++) {
+      dd.push(null)
+    }
+    for (let i = 0; i < d6 - 1; i++) {
+      ds.push(null);
+    }
     const days = [
-      ...range(d1 - (d2 + 1), d1 + 1),
-      ...range(1, d3 + 1),
-      ...range(1, (42 - d3 - d2) + 1),
+      ...dd,
+      ...range(1, d3 + 1)
     ];
 
+    const days1 = [
+      ...ds,
+      ...range(1, d4 + 1),
+    ]
+    let rand = Math.random();
     return (
       <CalendarContainer visible={visible}>
         <Toolbar>
@@ -154,39 +204,92 @@ class Calendar extends PureComponent<Props> {
               value.toLocaleString({ month: 'long', year: 'numeric' })
             }
           </CurrentDate>
+          <CurrentDate>
+            {returnState ?
+              returnValue.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' }) :
+              value.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })
+            }
+          </CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {returnState ? returnValue.plus({ month: 1 }).monthShort : value.plus({ month: 1 }).monthShort}
+            {returnState ? returnValue.plus({ month: 2 }).monthShort : value.plus({ month: 2 }).monthShort}
           </ButtonNext>
         </Toolbar>
+        <TableContainer>
+          <TableBContainer>
+            <Table>
+              <thead>
+                <tr>
+                  {returnState ?
+                    getWeeks(returnValue.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
+                    getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
+                  }
+                </tr>
+              </thead>
 
-        <Table>
-          <thead>
-            <tr>
-              {returnState ?
-                getWeeks(returnValue.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
-                getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
-              }
-            </tr>
-          </thead>
-
-          <tbody>
-            {chunk(days, 7).map((row, w) => (
-              <tr key={`week-${w + w}`}>
-                {row.map(i => (
-                  <Day
-                    key={`day-${i + i}`}
-                    i={i}
-                    w={w}
-                    value={value}
-                    selectDate={this.selectDate}
-                    returnValue={returnValue}
-                    returnState={returnState}
-                  />
+              <tbody>
+                {chunk(days, 7).map((row, w) => (
+                  <tr key={`week-${w + w}`}>
+                    {row.map((i, index) => (
+                      <Day
+                        key={`day-${Math.random()}`}
+                        i={i}
+                        w={w}
+                        value={value}
+                        selectDate={this.selectDate}
+                        returnValue={returnValue}
+                        returnState={returnState}
+                      />
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+              </tbody>
+            </Table>
+            <MainButton
+              type="button"
+              className="ion-checkmark"
+              onClick={this.handleConfirmClick}
+            >
+              OK
+            </MainButton>
+          </TableBContainer>
+          <TableBContainer>
+            <Table>
+              <thead>
+                <tr>
+                  {returnState ?
+                    getWeeks(returnValue.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
+                    getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
+                  }
+                </tr>
+              </thead>
+
+              <tbody>
+                {chunk(days1, 7).map((row, w) => (
+                  <tr key={`week-${w + w}`}>
+                    {row.map(i => (
+                      <Day
+                        key={`day1-${Math.random()}`}
+                        i={i}
+                        w={w + 7}
+                        value={value}
+                        selectDate={this.selectDate}
+                        returnValue={returnValue}
+                        returnState={returnState}
+                      />
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <MainButton
+              type="button"
+              className="ion-checkmark"
+              onClick={this.handleCancelClick}
+            >
+              Cancel
+            </MainButton>
+          </TableBContainer>
+        </TableContainer>
       </CalendarContainer>
     );
   }
