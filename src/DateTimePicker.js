@@ -150,7 +150,7 @@ class DateTimePicker extends Component<Props, State> {
   }
 
   handleChangeShow= (dateFrom: DateTime, dateTo: DateTime): ?Object => {
-    const { onChange, returnState } = this.props;
+    const { returnState } = this.props;
     if (returnState) 
       this.setState({
         dateShow: dateTo
@@ -166,7 +166,6 @@ class DateTimePicker extends Component<Props, State> {
   }
 
   handleChangeMonth= (dateShow: DateTime): ?Object => {
-    const { onChange, returnState } = this.props;
     this.setState({
       dateShow
     });

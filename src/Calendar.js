@@ -132,8 +132,7 @@ class Calendar extends PureComponent<Props> {
 
   prevMonth = (e: Event) => {
     e.preventDefault();
-    const {
-      returnState, valueShow, onChangeMonth
+    const { valueShow, onChangeMonth
     } = this.props;
 
     let date = valueShow.set({day: 1})
@@ -142,8 +141,7 @@ class Calendar extends PureComponent<Props> {
 
   nextMonth = (e: Event) => {
     e.preventDefault();
-    const {
-      returnState, valueShow, onChangeMonth
+    const { valueShow, onChangeMonth
     } = this.props
     let date = valueShow.set({day: 1})
     onChangeMonth(date.plus({ month: 2 }));
