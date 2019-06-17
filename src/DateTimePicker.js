@@ -108,7 +108,10 @@ type Props = {
 type State = {
   tab: 0 | 1,
   date: DateTime,
-  selectedTime: integer
+  selectedTime: integer,
+  valueShow: DateTime,
+  returnValueShow: DateTime,
+  dateShow: DateTime
 };
 
 class DateTimePicker extends Component<Props, State> {
@@ -121,7 +124,10 @@ class DateTimePicker extends Component<Props, State> {
     this.state = {
       tab: 0,
       date: props.value,
-      selectedTime: 1
+      selectedTime: 1,
+      dateShow: props.value,
+      valueShow: props.value,
+      returnValueShow: props.value.plus({days: 1}),
     };
   }
 
@@ -138,9 +144,34 @@ class DateTimePicker extends Component<Props, State> {
     const { onChange } = this.props;
 
     this.setState({
-      date,
+      date
     });
     return onChange(date);
+  }
+
+  handleChangeShow= (dateFrom: DateTime, dateTo: DateTime): ?Object => {
+    const { onChange, returnState } = this.props;
+    if (returnState) 
+      this.setState({
+        dateShow: dateTo
+      });
+    else 
+      this.setState({
+        dateShow: dateFrom
+      });
+    if (!returnState) {
+      this.setState({ valueShow: dateFrom });
+      this.setState({ returnValueShow: dateTo });
+    }
+  }
+
+  handleChangeMonth= (dateShow: DateTime): ?Object => {
+    const { onChange, returnState } = this.props;
+    this.setState({
+      dateShow
+    });
+    this.setState({ valueShow: dateShow });
+    this.setState({ returnValueShow: dateShow.plus({days: 1}) });
   }
 
   handleConfirmClick = () => {
@@ -175,7 +206,7 @@ class DateTimePicker extends Component<Props, State> {
   }
 
   render() {
-    const { tab, selectedTime } = this.state;
+    const { tab, selectedTime, valueShow, returnValueShow } = this.state;
     const {
       value, language, label, labelStyle, returnValue, returnState,
     } = this.props;
@@ -207,12 +238,16 @@ class DateTimePicker extends Component<Props, State> {
             visible={tab === 0}
             value={value}
             onChange={this.handleChange}
+            onChangeShow={this.handleChangeShow}
+            onChangeMonth={this.handleChangeMonth}
             switchTab={this.switchTabTwo}
             onSelect={this.handleConfirmClick}
             returnValue={returnValue}
             returnState={returnState}
             handleConfirmClick={this.handleConfirmClick}
             handleCancelClick={this.handleCancelClick}
+            valueShow={valueShow}
+            returnValueShow={returnValueShow}
           />
 
         <TimeContainer visible={tab === 1}>

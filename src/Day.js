@@ -52,16 +52,16 @@ class Day extends PureComponent<Props> {
 
   render() {
     const {
-      i, w, selectDate, returnValue, value, returnState, ...other
+      i, w, selectDate, returnValue, value, returnState, valueShow, returnValueShow, ...other
     } = this.props;
-    const currentDate = getDate(i, w, returnState ? returnValue : value);
+    const currentDate = getDate(i, w, returnState ? returnValueShow : valueShow);
     const selected =
       (currentDate.day === returnValue.day && currentDate.month === returnValue.month && i != null) ||
       (currentDate.day === value.day && currentDate.month === value.month && i != null);
-
     if (returnValue && !selected && i != null) {
       const realDate = returnState ? value : DateTime.local();
-      if (currentDate < realDate) {
+      
+      if (currentDate < realDate && returnState) {
         return (
           <DisabledTd
             {...other}

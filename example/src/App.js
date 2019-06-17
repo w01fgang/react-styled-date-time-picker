@@ -21,6 +21,7 @@ class App extends React.Component {
       this.setState({ toDate: date });
     } else {
       this.setState({ fromDate: date });
+      this.setState({ toDate: date});
     }
   }
 

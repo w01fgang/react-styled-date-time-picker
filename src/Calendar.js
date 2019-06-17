@@ -109,15 +109,18 @@ type Props = {
 class Calendar extends PureComponent<Props> {
   selectDate = (i: number, w: number) => {
     const {
-      value, returnValue, returnState, onChange, switchTab, onSelect
+      returnState, onChange, switchTab, onSelect, onChangeShow, returnValueShow, valueShow
     } = this.props;
-    let date;
+    let date, dateFrom;
     if (returnState) {
-      date = getDate(i, w, returnValue);
+      date = getDate(i, w, returnValueShow);
+      dateFrom = getDate(i, w, valueShow);
     } else {
-      date = getDate(i, w, value);
+      date = getDate(i, w, valueShow);
+      dateFrom = getDate(i, w, returnValueShow);
     }
     const options = onChange(date);
+    onChangeShow(date, dateFrom)
 
     if ((!options || options.switchTab) && !returnState) {
       onSelect();
@@ -130,22 +133,20 @@ class Calendar extends PureComponent<Props> {
   prevMonth = (e: Event) => {
     e.preventDefault();
     const {
-      returnState, returnValue, value, onChange,
+      returnState, valueShow, onChangeMonth
     } = this.props;
-    if (returnState) {
-      onChange(returnValue.minus({ month: 2 }));
-    } else {
-      onChange(value.minus({ month: 2 }));
-    }
+
+    let date = valueShow.set({day: 1})
+    onChangeMonth(date.minus({ month: 2 }));
   }
 
   nextMonth = (e: Event) => {
     e.preventDefault();
-    if (this.props.returnState) {
-      this.props.onChange(this.props.returnValue.plus({ month: 2 }));
-    } else {
-      this.props.onChange(this.props.value.plus({ month: 2 }));
-    }
+    const {
+      returnState, valueShow, onChangeMonth
+    } = this.props
+    let date = valueShow.set({day: 1})
+    onChangeMonth(date.plus({ month: 2 }));
   }
 
   handleConfirmClick = () => {
@@ -158,22 +159,22 @@ class Calendar extends PureComponent<Props> {
 
   render() {
     const {
-      value, visible, language, returnValue, returnState,
+      value, visible, language, returnValue, returnState, valueShow, returnValueShow
     } = this.props;
     let d3;
     let d4;
     let d5;
     let d6;
     if (returnState) {
-      d3 = returnValue.endOf('month').day;
-      d4 = returnValue.plus({ month: 1 }).endOf('month').day;
+      d3 = returnValueShow.endOf('month').day;
+      d4 = returnValueShow.plus({ month: 1 }).endOf('month').day;
     } else {
-      d3 = value.endOf('month').day;
-      d4 = value.plus({ month: 1 }).endOf('month').day;
+      d3 = valueShow.endOf('month').day;
+      d4 = valueShow.plus({ month: 1 }).endOf('month').day;
     }
     
-    d5 = value.set({ day: 1 }).weekday
-    d6 = returnValue.plus({month: 1}).set({ day: 1 }).weekday
+    d5 = valueShow.set({ day: 1 }).weekday
+    d6 = returnValueShow.plus({month: 1}).set({ day: 1 }).weekday
     let dd = [];
     let ds = [];
     for (let i = 0; i < d5 - 1; i++) {
@@ -195,22 +196,22 @@ class Calendar extends PureComponent<Props> {
       <CalendarContainer visible={visible}>
         <Toolbar>
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
-            {returnState ? returnValue.minus({ month: 1 }).monthShort : value.minus({ month: 1 }).monthShort}
+            {returnState ? returnValueShow.minus({ month: 1 }).monthShort : valueShow.minus({ month: 1 }).monthShort}
           </ButtonPrev>
           <CurrentDate>
             {returnState ?
-              returnValue.toLocaleString({ month: 'long', year: 'numeric' }) :
-              value.toLocaleString({ month: 'long', year: 'numeric' })
+              returnValueShow.toLocaleString({ month: 'long', year: 'numeric' }) :
+              valueShow.toLocaleString({ month: 'long', year: 'numeric' })
             }
           </CurrentDate>
           <CurrentDate>
             {returnState ?
-              returnValue.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' }) :
-              value.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })
+              returnValueShow.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' }) :
+              valueShow.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })
             }
           </CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {returnState ? returnValue.plus({ month: 2 }).monthShort : value.plus({ month: 2 }).monthShort}
+            {returnState ? returnValueShow.plus({ month: 2 }).monthShort : valueShow.plus({ month: 2 }).monthShort}
           </ButtonNext>
         </Toolbar>
         <TableContainer>
@@ -219,8 +220,8 @@ class Calendar extends PureComponent<Props> {
               <thead>
                 <tr>
                   {returnState ?
-                    getWeeks(returnValue.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
-                    getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
+                    getWeeks(returnValueShow.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
+                    getWeeks(valueShow.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
                   }
                 </tr>
               </thead>
@@ -237,6 +238,8 @@ class Calendar extends PureComponent<Props> {
                         selectDate={this.selectDate}
                         returnValue={returnValue}
                         returnState={returnState}
+                        valueShow={valueShow}
+                        returnValueShow={returnValueShow}
                       />
                     ))}
                   </tr>
@@ -256,8 +259,8 @@ class Calendar extends PureComponent<Props> {
               <thead>
                 <tr>
                   {returnState ?
-                    getWeeks(returnValue.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
-                    getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
+                    getWeeks(returnValueShow.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
+                    getWeeks(valueShow.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
                   }
                 </tr>
               </thead>
@@ -274,6 +277,8 @@ class Calendar extends PureComponent<Props> {
                         selectDate={this.selectDate}
                         returnValue={returnValue}
                         returnState={returnState}
+                        valueShow={valueShow}
+                        returnValueShow={returnValueShow}
                       />
                     ))}
                   </tr>
