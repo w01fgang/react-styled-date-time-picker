@@ -56,8 +56,8 @@ class Day extends PureComponent<Props> {
     } = this.props;
     const currentDate = getDate(i, w, returnState ? returnValueShow : valueShow);
     const selected =
-      (currentDate.day === returnValue.day && currentDate.month === returnValue.month && i != null) ||
-      (currentDate.day === value.day && currentDate.month === value.month && i != null);
+      (currentDate.day === returnValue.day && currentDate.month === returnValue.month && currentDate.year === returnValue.year && i != null) ||
+      (currentDate.day === value.day && currentDate.month === value.month && currentDate.year === value.year && i != null);
     if (returnValue && !selected && i != null) {
       const realDate = returnState ? value : DateTime.local();
       

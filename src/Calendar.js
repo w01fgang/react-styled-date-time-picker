@@ -48,6 +48,7 @@ const CurrentDate = styled.span`
 
 const Table = styled.table`
   width: 270px;
+  min-height: 206px;
   border-collapse: collapse;
   border-spacing: 0;
   table-layout: fixed;
