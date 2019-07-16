@@ -47,7 +47,7 @@
     "eslint-plugin-react": "7.11.1",
     "flow-bin": "0.82.0",
     "flow-runtime": "0.17.0",
-    "flow-typed": "2.5.1",
+    "flow-typed": "2.6.0",
     "glow": "1.2.2",
     "webpack": "3.10.0",
     "husky": "1.1.1",
