@@ -1,13 +1,13 @@
 // @flow
 /* eslint-disable import/no-unresolved, import/extensions */
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import styled, { type StyledComponent } from 'styled-components';
 import { type DateTime } from 'luxon';
 /** eslint-enable */
 import Calendar from './Calendar';
 import Time from './Time';
 
-const Container = styled.div`
+const Container: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   display: inline-block;
   width: 585px;
   padding: 12px 15px;
@@ -17,7 +17,7 @@ const Container = styled.div`
   background: rgba(255, 255, 255, 1);
 `;
 
-const TimeContainer = styled.div`
+const TimeContainer: StyledComponent<{ visible: boolean }, {}, HTMLDivElement> = styled.div`
   display: ${props => (props.visible ? 'flex' : 'none')};
   align-items: center;
   justify-content: space-around;
@@ -28,7 +28,7 @@ const TimeContainer = styled.div`
   }
 `;
 
-const Options = styled.div`
+const Options: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   width: 100%;
   display: inline-block;
   margin-bottom: 4px;
@@ -60,11 +60,11 @@ const Button = styled.button`
   }
 `;
 
-const Tabs = styled.div`
+const Tabs: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   margin-bottom: 11px;
 `;
 
-const Label = styled.div`
+const Label: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   margin: 10px auto;
   margin-top: 0;
   text-align: center;
@@ -108,7 +108,7 @@ type Props = {
 type State = {
   tab: 0 | 1,
   date: DateTime,
-  selectedTime: integer,
+  selectedTime: number,
   valueShow: DateTime,
   returnValueShow: DateTime,
   dateShow: DateTime
@@ -127,7 +127,7 @@ class DateTimePicker extends Component<Props, State> {
       selectedTime: 1,
       dateShow: props.value,
       valueShow: props.value,
-      returnValueShow: props.value.plus({days: 1}),
+      returnValueShow: props.value.plus({ days: 1 }),
     };
   }
 
@@ -140,37 +140,36 @@ class DateTimePicker extends Component<Props, State> {
 
   switchTabTwo = (e: Event) => this.handleClickTab(1, e);
 
-  handleChange = (date: DateTime): ?Object => {
+  handleChange = (date: DateTime) => {
     const { onChange } = this.props;
 
-    this.setState({
-      date
-    });
-    return onChange(date);
+    this.setState(() => ({ date }));
+    onChange(date);
   }
 
-  handleChangeShow= (dateFrom: DateTime, dateTo: DateTime): ?Object => {
+  handleChangeShow= (dateFrom: DateTime, dateTo: DateTime) => {
     const { returnState } = this.props;
-    if (returnState) 
+    if (returnState) {
       this.setState({
-        dateShow: dateTo
+        dateShow: dateTo,
       });
-    else 
+    } else {
       this.setState({
-        dateShow: dateFrom
+        dateShow: dateFrom,
       });
+    }
     if (!returnState) {
       this.setState({ valueShow: dateFrom });
       this.setState({ returnValueShow: dateTo });
     }
   }
 
-  handleChangeMonth= (dateShow: DateTime): ?Object => {
+  handleChangeMonth = (dateShow: DateTime) => {
     this.setState({
-      dateShow
+      dateShow,
     });
     this.setState({ valueShow: dateShow });
-    this.setState({ returnValueShow: dateShow.plus({days: 1}) });
+    this.setState({ returnValueShow: dateShow.plus({ days: 1 }) });
   }
 
   handleConfirmClick = () => {
@@ -193,11 +192,12 @@ class DateTimePicker extends Component<Props, State> {
   }
 
   changeSelectedTime = () => {
-    const { onClose, onSelect } = this.props
-    if (this.state.selectedTime === 1) {
-      this.setState({selectedTime: 2})
+    const { onClose, onSelect } = this.props;
+    const { selectedTime } = this.state;
+    if (selectedTime === 1) {
+      this.setState({ selectedTime: 2 });
     } else {
-      this.setState({selectedTime: 1})
+      this.setState({ selectedTime: 1 });
       onClose();
     }
 
@@ -205,10 +205,13 @@ class DateTimePicker extends Component<Props, State> {
   }
 
   render() {
-    const { tab, selectedTime, valueShow, returnValueShow } = this.state;
     const {
-      value, language, label, labelStyle, returnValue, returnState,
+      tab, selectedTime, valueShow, returnValueShow,
+    } = this.state;
+    const {
+      value, language = 'en', label, labelStyle, returnValue, returnState,
     } = this.props;
+
     return (
       <Container>
         { label
@@ -249,31 +252,31 @@ class DateTimePicker extends Component<Props, State> {
             returnValueShow={returnValueShow}
           />
 
-        <TimeContainer visible={tab === 1}>
-          <Time
-            language={language}
-            visible={tab === 1}
-            value={value}
-            onChange={this.handleChange}
-            returnValue={returnValue}
-            returnState={returnState}
-            changeSelectedTime={this.changeSelectedTime}
-            selected={selectedTime}
-            index={1}
-          />
+          <TimeContainer visible={tab === 1}>
+            <Time
+              language={language}
+              visible={tab === 1}
+              value={value}
+              onChange={this.handleChange}
+              returnValue={returnValue}
+              returnState={returnState}
+              changeSelectedTime={this.changeSelectedTime}
+              selected={selectedTime}
+              index={1}
+            />
 
-          <Time
-            language={language}
-            visible={tab === 1}
-            value={returnValue}
-            onChange={this.handleChange}
-            returnValue={returnValue}
-            returnState={returnState}
-            changeSelectedTime={this.changeSelectedTime}
-            selected={selectedTime}
-            index={2}
-          />
-        </TimeContainer>
+            <Time
+              language={language}
+              visible={tab === 1}
+              value={returnValue}
+              onChange={this.handleChange}
+              returnValue={returnValue}
+              returnState={returnState}
+              changeSelectedTime={this.changeSelectedTime}
+              selected={selectedTime}
+              index={2}
+            />
+          </TimeContainer>
         </Tabs>
       </Container>
     );

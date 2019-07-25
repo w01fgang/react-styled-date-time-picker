@@ -1,14 +1,18 @@
 // @flow
 /* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
-import styled from 'styled-components';
+import styled, { type StyledComponent } from 'styled-components';
 import { DateTime } from 'luxon';
+/** eslint-enable */
 
 import getDate from './getDate';
 
-/** eslint-enable */
+type TdProps = {
+  active?: boolean,
+  inRange?: boolean,
+};
 
-const Td = styled.td`
+const Td: StyledComponent<TdProps, {}, HTMLTableCellElement> = styled.td`
   padding: 5px 0;
   text-align: center;
   cursor: pointer;
@@ -31,7 +35,7 @@ const Td = styled.td`
   }
 `;
 
-const DisabledTd = styled(Td)`
+const DisabledTd: StyledComponent<TdProps, {}, React$ComponentType<*>> = styled(Td)`
   color: #999;
 `;
 
@@ -40,6 +44,8 @@ type Props = {
   w: number,
   selectDate: Function,
   returnValue: DateTime,
+  valueShow: DateTime,
+  returnValueShow: DateTime,
   returnState: boolean,
   value: DateTime,
 };
@@ -55,12 +61,11 @@ class Day extends PureComponent<Props> {
       i, w, selectDate, returnValue, value, returnState, valueShow, returnValueShow, ...other
     } = this.props;
     const currentDate = getDate(i, w, returnState ? returnValueShow : valueShow);
-    const selected =
-      (currentDate.day === returnValue.day && currentDate.month === returnValue.month && currentDate.year === returnValue.year && i != null) ||
-      (currentDate.day === value.day && currentDate.month === value.month && currentDate.year === value.year && i != null);
+    const selected = (currentDate.day === returnValue.day && currentDate.month === returnValue.month && currentDate.year === returnValue.year && i != null)
+      || (currentDate.day === value.day && currentDate.month === value.month && currentDate.year === value.year && i != null);
     if (returnValue && !selected && i != null) {
       const realDate = returnState ? value : DateTime.local();
-      
+
       if (currentDate < realDate && returnState) {
         return (
           <DisabledTd
@@ -82,7 +87,7 @@ class Day extends PureComponent<Props> {
         );
       }
     }
-    
+
     if (i != null) {
       return (
         <Td
@@ -93,11 +98,10 @@ class Day extends PureComponent<Props> {
           {i}
         </Td>
       );
-    } else {
-      return (
-        <td></td>
-      )
     }
+    return (
+      <td />
+    );
   }
 }
 

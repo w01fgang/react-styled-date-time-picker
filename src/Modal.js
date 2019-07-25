@@ -1,11 +1,11 @@
 // @flow
 /* eslint-disable import/no-unresolved, import/extensions */
 import React, { PureComponent } from 'react';
-import styled from 'styled-components';
+import styled, { type StyledComponent } from 'styled-components';
 import { ReactPageClick } from 'react-page-click';
 /** eslint-enable */
 
-const Overlay = styled.div`
+const Overlay: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -15,7 +15,7 @@ const Overlay = styled.div`
   z-index: 1000;
 `;
 
-const Popup = styled.div`
+const Popup: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   position: fixed;
   top: 5%;
   left: 50%;
@@ -26,18 +26,22 @@ const Popup = styled.div`
   z-index: 1001;
 `;
 
-const Content = styled.div`
+const Content: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   padding: 0;
 `;
 
 const noop = () => {};
 
 type Props = {
-  onClose: Function,
-  closeOnOutsideClick: boolean,
+  onClose: () => void,
+  closeOnOutsideClick?: boolean,
 };
 
 class Modal extends PureComponent<Props> {
+  static defaultProps = {
+    closeOnOutsideClick: true,
+  }
+
   render() {
     const { onClose, closeOnOutsideClick, ...props } = this.props;
 

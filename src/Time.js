@@ -1,17 +1,17 @@
 // @flow
 /* eslint-disable import/no-unresolved, import/extensions */
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import styled, { type StyledComponent } from 'styled-components';
 import { type DateTime } from 'luxon';
 /** eslint-enable */
 
 import Arrow from './Arrow';
 
-const TimeInputContainer = styled.div`
+const TimeInputContainer: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   text-align: center;
 `;
 
-const Label = styled.span`
+const Label: StyledComponent<{ visible: boolean }, {}, HTMLSpanElement> = styled.span`
   display: ${props => (props.visible ? 'inline-block' : 'none')};
   width: 65px;
   height: 65px;
@@ -24,7 +24,7 @@ const Label = styled.span`
   cursor: pointer;
 `;
 
-const Input = styled.input`
+const Input: StyledComponent<{ show: boolean }, {}, HTMLInputElement> = styled.input`
   display: ${props => (props.show ? 'inline-block' : 'none')};
   width: 65px;
   height: 65px;
@@ -43,7 +43,7 @@ const Input = styled.input`
   font-family: Roboto;
 `;
 
-const Separater = styled.span`
+const Separater: StyledComponent<{}, {}, HTMLSpanElement> = styled.span`
   display: inline-block;
   font-size: 32px;
   font-weight: bold;
@@ -54,11 +54,11 @@ const Separater = styled.span`
   text-align: center;
 `;
 
-const FlexRow = styled.div`
+const FlexRow: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   flex: 0 0 100%;
 `;
 
-const ArrowContainer = styled.span`
+const ArrowContainer: StyledComponent<{}, {}, HTMLSpanElement> = styled.span`
   margin: 0 16px;
 
   & svg {
@@ -89,9 +89,8 @@ const MainButton = styled.button`
   visibility: ${(props) => {
     if (props.selected === props.index) {
       return 'unset';
-    } else {
-      return 'hidden'
     }
+    return 'hidden';
   }};
 
   &:before {
@@ -105,61 +104,59 @@ const addZeroInFront = (value: number): string => (
     : String(value)
 );
 
-type Position = {
-  x: number,
-  y: number,
-}
+type Props = {|
+  +value: DateTime,
+  +returnValue: DateTime,
+  +returnState: boolean,
+  +selected: number,
+  +index: number,
+  +onChange: (date: DateTime) => void,
+  +changeSelectedTime: () => void,
+|};
 
-type Props = {
-  visible: boolean,
-  value: DateTime,
-  returnValue: DateTime,
-  returnState: boolean,
-  onChange: Function,
-};
-
-type State = {
-  editHours: boolean,
-  editMinutes: boolean
-};
+type State = {|
+  +editHours: boolean,
+  +editMinutes: boolean
+|};
 
 class Time extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      editHours: false,
-      editMinutes: false
-    };
-  }
+  state = {
+    editHours: false,
+    editMinutes: false,
+  };
 
   getHours = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    const { value, returnValue, returnState } = this.props;
+    const {
+      value, returnValue, returnState, onChange,
+    } = this.props;
     if (returnState) {
       const date = returnValue.set({ hours: parseInt(e.target.value, 10) });
-      this.props.onChange(date);
+      onChange(date);
       this.editHours();
     } else {
       const date = value.set({ hours: parseInt(e.target.value, 10) });
-      this.props.onChange(date);
+      onChange(date);
       this.editHours();
     }
   }
 
   getMinutes = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    const { value, returnValue, returnState } = this.props;
+    const {
+      value, returnValue, returnState, onChange,
+    } = this.props;
     if (returnState) {
       const date = returnValue.set({ minutes: parseInt(e.target.value, 10) });
-      this.props.onChange(date);
+      onChange(date);
       this.editMinutes();
     } else {
       const date = value.set({ minutes: parseInt(e.target.value, 10) });
-      this.props.onChange(date);
+      onChange(date);
       this.editMinutes();
     }
   }
 
   editHours = () => {
-    this.setState({ editHours: !this.state.editHours });
+    this.setState(state => ({ editHours: !state.editHours }));
 
     setTimeout(() => {
       if (this.hours) this.hours.focus();
@@ -167,129 +164,108 @@ class Time extends Component<Props, State> {
   }
 
   editMinutes = () => {
-    this.setState({ editMinutes: !this.state.editMinutes });
+    this.setState(state => ({ editMinutes: !state.editMinutes }));
     setTimeout(() => {
       if (this.minutes) this.minutes.focus();
     }, 0);
   }
 
-  hours: ?HTMLInputElement;
-  minutes: ?HTMLInputElement;
-
-  changeMinutes = (pos: Position) => {
-    this.setState(() => ({ editMinutes: false }));
-    const { value, returnValue, returnState } = this.props;
-    if (returnState) {
-      const date = returnValue.set({ minutes: parseInt(pos.x, 10) });
-      this.props.onChange(date);
-    } else {
-      const date = value.set({ minutes: parseInt(pos.x, 10) });
-      this.props.onChange(date);
-    }
-  }
-
-  changeHours = (pos: Position) => {
-    this.setState(() => ({ editHours: false }));
-    const { value, returnValue, returnState } = this.props;
-    if (returnState) {
-      const date = returnValue.set({ hours: parseInt(pos.x, 10) });
-      this.props.onChange(date);
-    } else {
-      const date = value.set({ hours: parseInt(pos.x, 10) });
-      this.props.onChange(date);
-    }
-  }
-
   hoursUp = () => {
-    const { value, onChange, selected, index } = this.props;
-    if (selected === index)
-      onChange(value.plus({ hour: 1 }));
+    const {
+      value, onChange, selected, index,
+    } = this.props;
+    if (selected === index) onChange(value.plus({ hour: 1 }));
   }
 
   hoursDown = () => {
-    const { value, onChange, selected, index } = this.props;
-    if (selected === index)
-      onChange(value.minus({ hour: 1 }));
-  }
-
-  handleSelectTime = () => {
-    this.props.changeSelectedTime();
+    const {
+      value, onChange, selected, index,
+    } = this.props;
+    if (selected === index) onChange(value.minus({ hour: 1 }));
   }
 
   minutesUp = () => {
-    const { value, onChange, selected, index } = this.props;
-    if (selected === index)
-      onChange(value.plus({ minute: 1 }));
+    const {
+      value, onChange, selected, index,
+    } = this.props;
+    if (selected === index) onChange(value.plus({ minute: 1 }));
   }
 
   minutesDown = () => {
-    const { value, onChange, selected, index } = this.props;
-    if (selected === index)
-      onChange(value.minus({ minute: 1 }));
+    const {
+      value, onChange, selected, index,
+    } = this.props;
+    if (selected === index) onChange(value.minus({ minute: 1 }));
   }
+
+  hours: ?HTMLInputElement;
+
+  minutes: ?HTMLInputElement;
 
   render() {
     const { editHours, editMinutes } = this.state;
-    const { value, index, selected } = this.props;
+    const {
+      value, index, selected, changeSelectedTime,
+    } = this.props;
 
     return (
-        <TimeInputContainer>
-          <FlexRow>
-            <ArrowContainer>
-              <Arrow height="65" width="65" onClick={this.hoursUp} />
-            </ArrowContainer>
-            <ArrowContainer>
-              <Arrow height="65" width="65" onClick={this.minutesUp} />
-            </ArrowContainer>
-          </FlexRow>
-          <FlexRow>
-            <Input
-              type="text"
-              key={1}
-              defaultValue={value.hour}
-              onBlur={this.getHours}
-              min={0}
-              max={23}
-              ref={(node) => { this.hours = node; }}
-              show={editHours}
-            />
-            <Label visible={!editHours} onClick={this.editHours}>
-              {value.hour}
-            </Label>
-            <Separater>:</Separater>
-            <Input
-              type="text"
-              key={2}
-              className="time"
-              defaultValue={value.minute}
-              onBlur={this.getMinutes}
-              min={0}
-              max={23}
-              ref={(node) => { this.minutes = node; }}
-              show={editMinutes}
-            />
-            <Label visible={!editMinutes} onClick={this.editMinutes}>
-              {addZeroInFront(value.minute)}
-            </Label>
-          </FlexRow>
-          <FlexRow>
-            <ArrowDownContainer>
-              <Arrow height="65" width="65" onClick={this.hoursDown} />
-            </ArrowDownContainer>
-            <ArrowDownContainer>
-              <Arrow height="65" width="65" onClick={this.minutesDown} />
-            </ArrowDownContainer>
-          </FlexRow>
-          <MainButton
-              type="button"
-              selected={selected}
-              index={index}
-              className="ion-checkmark"
-              onClick={this.handleSelectTime}
-            >
+      <TimeInputContainer>
+        <FlexRow>
+          <ArrowContainer>
+            <Arrow height="65" width="65" onClick={this.hoursUp} />
+          </ArrowContainer>
+          <ArrowContainer>
+            <Arrow height="65" width="65" onClick={this.minutesUp} />
+          </ArrowContainer>
+        </FlexRow>
+        <FlexRow>
+          <Input
+            type="text"
+            key={1}
+            defaultValue={value.hour}
+            onBlur={this.getHours}
+            min={0}
+            max={23}
+            ref={(node) => { this.hours = node; }}
+            show={editHours}
+          />
+          <Label visible={!editHours} onClick={this.editHours}>
+            {value.hour}
+          </Label>
+          <Separater>:</Separater>
+          <Input
+            type="text"
+            key={2}
+            className="time"
+            defaultValue={value.minute}
+            onBlur={this.getMinutes}
+            min={0}
+            max={23}
+            ref={(node) => { this.minutes = node; }}
+            show={editMinutes}
+          />
+          <Label visible={!editMinutes} onClick={this.editMinutes}>
+            {addZeroInFront(value.minute)}
+          </Label>
+        </FlexRow>
+        <FlexRow>
+          <ArrowDownContainer>
+            <Arrow height="65" width="65" onClick={this.hoursDown} />
+          </ArrowDownContainer>
+          <ArrowDownContainer>
+            <Arrow height="65" width="65" onClick={this.minutesDown} />
+          </ArrowDownContainer>
+        </FlexRow>
+        <MainButton
+          type="button"
+          selected={selected}
+          index={index}
+          className="ion-checkmark"
+          onClick={changeSelectedTime}
+        >
               OK
-          </MainButton>
-        </TimeInputContainer>
+        </MainButton>
+      </TimeInputContainer>
     );
   }
 }
