@@ -64,10 +64,10 @@ class App extends React.Component {
           onChange={this.setDate}
           onClose={this.togglePicker}
           language="en"
-          label="Some Label"
+          label="Select date range"
           labelStyle={{
             fontSize: 20,
-            color: 'red',
+            color: '#263238',
           }}
           returnState={this.state.dateState !== 'dateFrom'}
         />
@@ -77,4 +77,3 @@ class App extends React.Component {
 }
 
 export default App;
-

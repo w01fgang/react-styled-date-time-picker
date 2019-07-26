@@ -94,15 +94,15 @@ const labels = {
 };
 
 type Props = {
-  onChange: Function,
-  onSelect: Function,
-  onClose: Function,
-  value: DateTime,
-  returnValue: DateTime,
-  returnState: boolean,
-  language?: Language,
-  label: string,
-  labelStyle: Object,
+  onChange: (firstDate: DateTime, secondDate: DateTime) => void,
+  +onSelect: (firstDate: DateTime, secondDate: DateTime) => void,
+  +onClose: () => void,
+  +value: DateTime,
+  +returnValue: DateTime,
+  +returnState: boolean,
+  +language: Language,
+  +label: string,
+  +labelStyle: Object,
 };
 
 type State = {
@@ -111,21 +111,15 @@ type State = {
   selectedTime: number,
   valueShow: DateTime,
   returnValueShow: DateTime,
-  dateShow: DateTime
 };
 
 class DateTimePicker extends Component<Props, State> {
-  static defaultProps = {
-    language: 'en',
-  }
-
   constructor(props: Props) {
     super(props);
     this.state = {
       tab: 0,
       date: props.value,
       selectedTime: 1,
-      dateShow: props.value,
       valueShow: props.value,
       returnValueShow: props.value.plus({ days: 1 }),
     };
@@ -149,15 +143,6 @@ class DateTimePicker extends Component<Props, State> {
 
   handleChangeShow= (dateFrom: DateTime, dateTo: DateTime) => {
     const { returnState } = this.props;
-    if (returnState) {
-      this.setState({
-        dateShow: dateTo,
-      });
-    } else {
-      this.setState({
-        dateShow: dateFrom,
-      });
-    }
     if (!returnState) {
       this.setState({ valueShow: dateFrom });
       this.setState({ returnValueShow: dateTo });
@@ -165,9 +150,6 @@ class DateTimePicker extends Component<Props, State> {
   }
 
   handleChangeMonth = (dateShow: DateTime) => {
-    this.setState({
-      dateShow,
-    });
     this.setState({ valueShow: dateShow });
     this.setState({ returnValueShow: dateShow.plus({ days: 1 }) });
   }
@@ -201,7 +183,7 @@ class DateTimePicker extends Component<Props, State> {
       onClose();
     }
 
-    onSelect();
+    if (onSelect) { onSelect(); }
   }
 
   render() {
