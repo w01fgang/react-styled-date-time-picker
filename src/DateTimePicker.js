@@ -34,7 +34,7 @@ const Options: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   margin-bottom: 4px;
 `;
 
-const Button = styled.button`
+const Button: StyledComponent<{ active: boolean }, {}, HTMLButtonElement> = styled.button`
   float: left;
   width: 50%;
   color: ${props => (props.active ? '#f8f8f8' : '#00A15F')};
@@ -93,105 +93,64 @@ const labels = {
   },
 };
 
-type Props = {
-  onChange: (firstDate: DateTime, secondDate: DateTime) => void,
-  +onSelect: (firstDate: DateTime, secondDate: DateTime) => void,
+type Props = {|
+  /* Called when user changes on the day of time */
+  onChange?: (dateFrom: DateTime, dateTo: DateTime) => void,
+  /* Called when user click OK */
+  +onSelect: (dateFrom: DateTime, dateTo: DateTime) => void,
+  /* Called when user closes the picker */
   +onClose: () => void,
-  +value: DateTime,
-  +returnValue: DateTime,
-  +returnState: boolean,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
   +language: Language,
-  +label: string,
-  +labelStyle: Object,
-};
+  label?: string,
+  labelStyle?: $Shape<CSSStyleDeclaration>,
+|};
 
-type State = {
-  tab: 0 | 1,
-  date: DateTime,
-  selectedTime: number,
-  valueShow: DateTime,
-  returnValueShow: DateTime,
-};
+type State = {|
+  +tab: 0 | 1,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
+|};
 
 class DateTimePicker extends Component<Props, State> {
+  static defaultProps = {
+    language: 'en',
+    onChange: null,
+    label: '',
+    labelStyle: {},
+  }
+
   constructor(props: Props) {
     super(props);
+    const { dateFrom, dateTo } = props;
     this.state = {
       tab: 0,
-      date: props.value,
-      selectedTime: 1,
-      valueShow: props.value,
-      returnValueShow: props.value.plus({ days: 1 }),
+      dateFrom,
+      dateTo,
     };
   }
 
-  handleClickTab = (tab: 0 | 1, e: Event) => {
-    if (e) e.preventDefault();
-    this.setState(() => ({ tab }));
+  switchTabOne = () => this.setState(() => ({ tab: 0 }));
+
+  switchTabTwo = () => this.setState(() => ({ tab: 1 }));
+
+  handleTimeFrom = (dateFrom: DateTime) => {
+    this.setState(() => ({ dateFrom }));
   }
 
-  switchTabOne = (e: Event) => this.handleClickTab(0, e);
-
-  switchTabTwo = (e: Event) => this.handleClickTab(1, e);
-
-  handleChange = (date: DateTime) => {
-    const { onChange } = this.props;
-
-    this.setState(() => ({ date }));
-    onChange(date);
+  handleTimeTo = (dateTo: DateTime) => {
+    this.setState(() => ({ dateTo }));
   }
 
-  handleChangeShow= (dateFrom: DateTime, dateTo: DateTime) => {
-    const { returnState } = this.props;
-    if (!returnState) {
-      this.setState({ valueShow: dateFrom });
-      this.setState({ returnValueShow: dateTo });
-    }
-  }
-
-  handleChangeMonth = (dateShow: DateTime) => {
-    this.setState({ valueShow: dateShow });
-    this.setState({ returnValueShow: dateShow.plus({ days: 1 }) });
-  }
-
-  handleConfirmClick = () => {
-    const { onSelect, returnState, onClose } = this.props;
-    const { date, tab } = this.state;
-
-    onSelect(date);
-    if (tab === 1 && returnState) {
-      onClose();
-    }
-  }
-
-  handleCancelClick = () => {
-    const { onClose } = this.props;
-
-    this.setState({
-      tab: 0,
-    });
-    onClose();
-  }
-
-  changeSelectedTime = () => {
-    const { onClose, onSelect } = this.props;
-    const { selectedTime } = this.state;
-    if (selectedTime === 1) {
-      this.setState({ selectedTime: 2 });
-    } else {
-      this.setState({ selectedTime: 1 });
-      onClose();
-    }
-
-    if (onSelect) { onSelect(); }
-  }
+  handleChange = (dateFrom: DateTime, dateTo: DateTime) => this.setState(() => ({ dateFrom, dateTo }));
 
   render() {
     const {
-      tab, selectedTime, valueShow, returnValueShow,
+      tab, dateFrom, dateTo,
     } = this.state;
     const {
-      value, language = 'en', label, labelStyle, returnValue, returnState,
+      language, label, labelStyle, onClose,
     } = this.props;
 
     return (
@@ -220,44 +179,17 @@ class DateTimePicker extends Component<Props, State> {
           <Calendar
             language={language}
             visible={tab === 0}
-            value={value}
+            dateFrom={dateFrom}
+            dateTo={dateTo}
             onChange={this.handleChange}
-            onChangeShow={this.handleChangeShow}
-            onChangeMonth={this.handleChangeMonth}
             switchTab={this.switchTabTwo}
             onSelect={this.handleConfirmClick}
-            returnValue={returnValue}
-            returnState={returnState}
-            handleConfirmClick={this.handleConfirmClick}
-            handleCancelClick={this.handleCancelClick}
-            valueShow={valueShow}
-            returnValueShow={returnValueShow}
+            cancel={onClose}
           />
 
           <TimeContainer visible={tab === 1}>
-            <Time
-              language={language}
-              visible={tab === 1}
-              value={value}
-              onChange={this.handleChange}
-              returnValue={returnValue}
-              returnState={returnState}
-              changeSelectedTime={this.changeSelectedTime}
-              selected={selectedTime}
-              index={1}
-            />
-
-            <Time
-              language={language}
-              visible={tab === 1}
-              value={returnValue}
-              onChange={this.handleChange}
-              returnValue={returnValue}
-              returnState={returnState}
-              changeSelectedTime={this.changeSelectedTime}
-              selected={selectedTime}
-              index={2}
-            />
+            <Time value={dateFrom} onChange={this.handleTimeFrom} />
+            <Time value={dateTo} onChange={this.handleTimeTo} />
           </TimeContainer>
         </Tabs>
       </Container>

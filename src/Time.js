@@ -43,7 +43,7 @@ const Input: StyledComponent<{ show: boolean }, {}, HTMLInputElement> = styled.i
   font-family: Roboto;
 `;
 
-const Separater: StyledComponent<{}, {}, HTMLSpanElement> = styled.span`
+const Separator: StyledComponent<{}, {}, HTMLSpanElement> = styled.span`
   display: inline-block;
   font-size: 32px;
   font-weight: bold;
@@ -72,32 +72,6 @@ const ArrowDownContainer = styled(ArrowContainer)`
   }
 `;
 
-const MainButton = styled.button`
-  border: 0;
-  outline: 0;
-  cursor: pointer;
-  line-height: 1;
-  display: block;
-  margin-top: 10px;
-  width: 100%;
-  background-color: #00A15F;
-  padding: 12px 0;
-  text-align: center;
-  color: #f8f8f8;
-  font-size: 16px;
-  border-radius: 3px;
-  visibility: ${(props) => {
-    if (props.selected === props.index) {
-      return 'unset';
-    }
-    return 'hidden';
-  }};
-
-  &:before {
-    margin-right: 6px;
-  }
-`;
-
 const addZeroInFront = (value: number): string => (
   value >= 0 && value < 10
     ? `0${value}`
@@ -106,12 +80,7 @@ const addZeroInFront = (value: number): string => (
 
 type Props = {|
   +value: DateTime,
-  +returnValue: DateTime,
-  +returnState: boolean,
-  +selected: number,
-  +index: number,
   +onChange: (date: DateTime) => void,
-  +changeSelectedTime: () => void,
 |};
 
 type State = {|
@@ -127,32 +96,22 @@ class Time extends Component<Props, State> {
 
   getHours = (e: SyntheticInputEvent<HTMLInputElement>) => {
     const {
-      value, returnValue, returnState, onChange,
+      value, onChange,
     } = this.props;
-    if (returnState) {
-      const date = returnValue.set({ hours: parseInt(e.target.value, 10) });
-      onChange(date);
-      this.editHours();
-    } else {
-      const date = value.set({ hours: parseInt(e.target.value, 10) });
-      onChange(date);
-      this.editHours();
-    }
+
+    const date = value.set({ hours: parseInt(e.target.value, 10) });
+    onChange(date);
+    this.editHours();
   }
 
   getMinutes = (e: SyntheticInputEvent<HTMLInputElement>) => {
     const {
-      value, returnValue, returnState, onChange,
+      value, onChange,
     } = this.props;
-    if (returnState) {
-      const date = returnValue.set({ minutes: parseInt(e.target.value, 10) });
-      onChange(date);
-      this.editMinutes();
-    } else {
-      const date = value.set({ minutes: parseInt(e.target.value, 10) });
-      onChange(date);
-      this.editMinutes();
-    }
+
+    const date = value.set({ minutes: parseInt(e.target.value, 10) });
+    onChange(date);
+    this.editMinutes();
   }
 
   editHours = () => {
@@ -171,31 +130,23 @@ class Time extends Component<Props, State> {
   }
 
   hoursUp = () => {
-    const {
-      value, onChange, selected, index,
-    } = this.props;
-    if (selected === index) onChange(value.plus({ hour: 1 }));
+    const { value, onChange } = this.props;
+    onChange(value.plus({ hour: 1 }));
   }
 
   hoursDown = () => {
-    const {
-      value, onChange, selected, index,
-    } = this.props;
-    if (selected === index) onChange(value.minus({ hour: 1 }));
+    const { value, onChange } = this.props;
+    onChange(value.minus({ hour: 1 }));
   }
 
   minutesUp = () => {
-    const {
-      value, onChange, selected, index,
-    } = this.props;
-    if (selected === index) onChange(value.plus({ minute: 1 }));
+    const { value, onChange } = this.props;
+    onChange(value.plus({ minute: 1 }));
   }
 
   minutesDown = () => {
-    const {
-      value, onChange, selected, index,
-    } = this.props;
-    if (selected === index) onChange(value.minus({ minute: 1 }));
+    const { value, onChange } = this.props;
+    onChange(value.minus({ minute: 1 }));
   }
 
   hours: ?HTMLInputElement;
@@ -204,10 +155,7 @@ class Time extends Component<Props, State> {
 
   render() {
     const { editHours, editMinutes } = this.state;
-    const {
-      value, index, selected, changeSelectedTime,
-    } = this.props;
-
+    const { value } = this.props;
     return (
       <TimeInputContainer>
         <FlexRow>
@@ -232,7 +180,7 @@ class Time extends Component<Props, State> {
           <Label visible={!editHours} onClick={this.editHours}>
             {value.hour}
           </Label>
-          <Separater>:</Separater>
+          <Separator>:</Separator>
           <Input
             type="text"
             key={2}
@@ -256,15 +204,6 @@ class Time extends Component<Props, State> {
             <Arrow height="65" width="65" onClick={this.minutesDown} />
           </ArrowDownContainer>
         </FlexRow>
-        <MainButton
-          type="button"
-          selected={selected}
-          index={index}
-          className="ion-checkmark"
-          onClick={changeSelectedTime}
-        >
-              OK
-        </MainButton>
       </TimeInputContainer>
     );
   }

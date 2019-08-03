@@ -72,9 +72,7 @@ const Td = styled.td`
   text-transform: capitalize;
 `;
 
-const TableBContainer: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
-
-`;
+const TableBContainer: StyledComponent<{}, {}, HTMLDivElement> = styled.div``;
 const MainButton = styled.button`
   border: 0;
   outline: 0;
@@ -96,46 +94,46 @@ const MainButton = styled.button`
 `;
 
 type Props = {
-  onChange: Function,
-  switchTab: Function,
-  value: DateTime,
-  returnValue: DateTime,
-  valueShow: DateTime,
-  returnValueShow: DateTime,
-  returnState: boolean,
-  language: Language,
-  visible: boolean,
-  returnState: boolean,
-  handleConfirmClick: () => void,
-  handleCancelClick: () => void,
-  onSelect: () => void,
-  onChangeShow: (date: DateTime, dateFrom: DateTime) => void,
-  onChangeMonth: (date: DateTime) => void,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
+  +onChange: (dateFrom: DateTime, dateTo: DateTime) => void,
+  +switchTab: () => void,
+  +language: Language,
+  +visible: boolean,
 };
 
-class Calendar extends PureComponent<Props> {
-  selectDate = (i: number, w: number) => {
-    const {
-      returnState, onChange, switchTab, onSelect, onChangeShow, returnValueShow, valueShow,
-    } = this.props;
-    let date; let
-      dateFrom;
-    if (returnState) {
-      date = getDate(i, w, returnValueShow);
-      dateFrom = getDate(i, w, valueShow);
-    } else {
-      date = getDate(i, w, valueShow);
-      dateFrom = getDate(i, w, returnValueShow);
-    }
-    const options = onChange(date);
-    onChangeShow(date, dateFrom);
+type State = {
+  first: boolean,
+};
 
-    if ((!options || options.switchTab) && !returnState) {
-      onSelect();
+class Calendar extends PureComponent<Props, State> {
+  static defaultProps = {
+    returnState: false,
+    value: DateTime.local(),
+    returnValue: DateTime.local(),
+    valueShow: DateTime.local(),
+    returnValueShow: DateTime.local(),
+    onSelect: console.log,
+    onChangeShow: console.log,
+    handleConfirmClick: console.log,
+    handleCancelClick: console.log,
+  }
+
+  state = {
+    first: true,
+  };
+
+  selectDate = (i: number, w: number) => {
+    const { dateFrom, dateTo, onChange } = this.props;
+
+    const { first } = this.state;
+
+    if (first) {
+      onChange(getDate(i, w, dateFrom), dateTo);
     } else {
-      switchTab();
-      onSelect();
+      onChange(dateFrom, getDate(i, w, dateTo));
     }
+    this.setState(state => ({ first: !state.first }));
   }
 
   prevMonth = (e: Event) => {
@@ -157,6 +155,9 @@ class Calendar extends PureComponent<Props> {
     const {
       value, visible, language, returnValue, returnState, valueShow, returnValueShow, handleConfirmClick, handleCancelClick,
     } = this.props;
+
+    const { dateFrom, dateTo } = this.state;
+
     let d3;
     let d4;
     if (returnState) {
@@ -208,10 +209,7 @@ class Calendar extends PureComponent<Props> {
             <Table>
               <thead>
                 <tr>
-                  {returnState
-                    ? getWeeks(returnValueShow.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
-                    : getWeeks(valueShow.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
-                  }
+                  {getWeeks(dateFrom.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
                 </tr>
               </thead>
 
@@ -247,10 +245,7 @@ class Calendar extends PureComponent<Props> {
             <Table>
               <thead>
                 <tr>
-                  {returnState
-                    ? getWeeks(returnValueShow.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
-                    : getWeeks(valueShow.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
-                  }
+                  {getWeeks(dateTo.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
                 </tr>
               </thead>
 

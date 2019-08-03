@@ -12,12 +12,8 @@ type Props = {|
   +open: boolean,
   /* Label at the top of date picker window */
   label?: string,
-  /* Initial value */
-  +value: DateTime,
-  /* */
-  +returnValue: DateTime,
-  /* */
-  +returnState: boolean,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
   /* UI language */
   language?: Language,
   /* Called when user changes on the day of time */

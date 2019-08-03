@@ -58,8 +58,8 @@ class App extends React.Component {
         </div>
         <DateTimePicker
           open={this.state.open}
-          value={this.state.fromDate}
-          returnValue={this.state.toDate}
+          dateFrom={this.state.fromDate}
+          dateTo={this.state.toDate}
           onSelect={this.changeDateStatus}
           onChange={this.setDate}
           onClose={this.togglePicker}
