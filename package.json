@@ -39,7 +39,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
-    "eslint": "^5.6.1",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb": "17.1.0",
     "eslint-plugin-flowtype": "3.10.4",
     "eslint-plugin-import": "2.18.2",
