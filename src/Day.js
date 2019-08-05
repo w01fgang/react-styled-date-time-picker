@@ -43,11 +43,11 @@ type Props = {
   i: number,
   w: number,
   selectDate: Function,
-  returnValue: DateTime,
-  valueShow: DateTime,
+  dateFrom: DateTime,
+  dateTo: DateTime,
   returnValueShow: DateTime,
   returnState: boolean,
-  value: DateTime,
+  dateFrom: DateTime,
 };
 
 class Day extends PureComponent<Props> {
@@ -58,13 +58,13 @@ class Day extends PureComponent<Props> {
 
   render() {
     const {
-      i, w, selectDate, returnValue, value, returnState, valueShow, returnValueShow, ...other
+      i, w, selectDate, dateFrom, returnState, dateTo, returnValueShow, ...other
     } = this.props;
-    const currentDate = getDate(i, w, returnState ? returnValueShow : valueShow);
-    const selected = (currentDate.day === returnValue.day && currentDate.month === returnValue.month && currentDate.year === returnValue.year && i != null)
-      || (currentDate.day === value.day && currentDate.month === value.month && currentDate.year === value.year && i != null);
-    if (returnValue && !selected && i != null) {
-      const realDate = returnState ? value : DateTime.local();
+    const currentDate = getDate(i, w, returnState ? returnValueShow : dateTo);
+    const selected = (currentDate.day === dateFrom.day && currentDate.month === dateFrom.month && currentDate.year === dateFrom.year && i != null)
+      || (currentDate.day === dateFrom.day && currentDate.month === dateFrom.month && currentDate.year === dateFrom.year && i != null);
+    if (dateFrom && !selected && i != null) {
+      const realDate = returnState ? dateFrom : DateTime.local();
 
       if (currentDate < realDate && returnState) {
         return (
@@ -75,7 +75,7 @@ class Day extends PureComponent<Props> {
           </DisabledTd>
         );
       }
-      if (currentDate > value && currentDate < returnValue) {
+      if (currentDate > dateFrom && currentDate < dateFrom) {
         return (
           <Td
             inRange

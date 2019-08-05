@@ -9,7 +9,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       fromDate: DateTime.local(),
-      toDate: DateTime.local().plus({days: 1}),
+      toDate: DateTime.local().plus({ days: 1 }),
       open: false,
       dateState: 'dateFrom',
       timeState: 'timeFrom'

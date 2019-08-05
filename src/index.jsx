@@ -40,6 +40,7 @@ class Picker extends PureComponent<Props> {
     const {
       open, onClose, closeOnOutsideClick, ...other
     } = this.props;
+    console.log('Picker this.props', this.props);
 
     if (!open) {
       return null;

@@ -102,7 +102,7 @@ type Props = {|
   +onClose: () => void,
   +dateFrom: DateTime,
   +dateTo: DateTime,
-  +language: Language,
+  language?: Language,
   label?: string,
   labelStyle?: $Shape<CSSStyleDeclaration>,
 |};
@@ -124,6 +124,7 @@ class DateTimePicker extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { dateFrom, dateTo } = props;
+    console.log('DateTimePicker props', props);
     this.state = {
       tab: 0,
       dateFrom,
@@ -179,7 +180,7 @@ class DateTimePicker extends Component<Props, State> {
           <Calendar
             language={language}
             visible={tab === 0}
-            dateFrom={dateFrom}
+            dateFrom={console.log('dateFrom', dateFrom) || dateFrom}
             dateTo={dateTo}
             onChange={this.handleChange}
             switchTab={this.switchTabTwo}

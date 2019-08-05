@@ -97,31 +97,35 @@ type Props = {
   +dateFrom: DateTime,
   +dateTo: DateTime,
   +onChange: (dateFrom: DateTime, dateTo: DateTime) => void,
-  +switchTab: () => void,
   +language: Language,
   +visible: boolean,
 };
 
 type State = {
   first: boolean,
+  month: DateTime,
 };
 
 class Calendar extends PureComponent<Props, State> {
   static defaultProps = {
     returnState: false,
-    value: DateTime.local(),
-    returnValue: DateTime.local(),
-    valueShow: DateTime.local(),
+    dateTo: DateTime.local(),
+    dateFrom: DateTime.local(),
     returnValueShow: DateTime.local(),
     onSelect: console.log,
     onChangeShow: console.log,
     handleConfirmClick: console.log,
     handleCancelClick: console.log,
+    onChangeMonth: console.log,
   }
 
-  state = {
-    first: true,
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      first: true,
+      month: props.dateFrom,
+    };
+  }
 
   selectDate = (i: number, w: number) => {
     const { dateFrom, dateTo, onChange } = this.props;
@@ -136,39 +140,32 @@ class Calendar extends PureComponent<Props, State> {
     this.setState(state => ({ first: !state.first }));
   }
 
-  prevMonth = (e: Event) => {
-    e.preventDefault();
-    const { valueShow, onChangeMonth } = this.props;
+  prevMonth = () => {
+    const { month } = this.state;
+    const { dateFrom, onChangeMonth } = this.props;
 
-    const date = valueShow.set({ day: 1 });
+    const date = dateFrom.set({ day: 1 });
     onChangeMonth(date.minus({ month: 2 }));
   }
 
-  nextMonth = (e: Event) => {
-    e.preventDefault();
-    const { valueShow, onChangeMonth } = this.props;
-    const date = valueShow.set({ day: 1 });
+  nextMonth = () => {
+    const { month } = this.state;
+    const { dateFrom, onChangeMonth } = this.props;
+    const date = dateFrom.set({ day: 1 });
     onChangeMonth(date.plus({ month: 2 }));
   }
 
   render() {
     const {
-      value, visible, language, returnValue, returnState, valueShow, returnValueShow, handleConfirmClick, handleCancelClick,
+      dateFrom, visible, language, dateTo, returnValueShow, handleConfirmClick, handleCancelClick,
     } = this.props;
-
-    const { dateFrom, dateTo } = this.state;
 
     let d3;
     let d4;
-    if (returnState) {
-      d3 = returnValueShow.endOf('month').day;
-      d4 = returnValueShow.plus({ month: 1 }).endOf('month').day;
-    } else {
-      d3 = valueShow.endOf('month').day;
-      d4 = valueShow.plus({ month: 1 }).endOf('month').day;
-    }
+    d3 = dateFrom.endOf('month').day;
+    d4 = dateFrom.plus({ month: 1 }).endOf('month').day;
 
-    const d5 = valueShow.set({ day: 1 }).weekday;
+    const d5 = dateFrom.set({ day: 1 }).weekday;
     const d6 = returnValueShow.plus({ month: 1 }).set({ day: 1 }).weekday;
     const dd = new Array(d5 - 1).fill(null);
     const ds = new Array(d6 - 1).fill(null);
@@ -186,22 +183,16 @@ class Calendar extends PureComponent<Props, State> {
       <CalendarContainer visible={visible}>
         <Toolbar>
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
-            {returnState ? returnValueShow.minus({ month: 1 }).monthShort : valueShow.minus({ month: 1 }).monthShort}
+            {dateFrom.minus({ month: 1 }).monthShort}
           </ButtonPrev>
           <CurrentDate>
-            {returnState
-              ? returnValueShow.toLocaleString({ month: 'long', year: 'numeric' })
-              : valueShow.toLocaleString({ month: 'long', year: 'numeric' })
-            }
+            {dateFrom.toLocaleString({ month: 'long', year: 'numeric' })}
           </CurrentDate>
           <CurrentDate>
-            {returnState
-              ? returnValueShow.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })
-              : valueShow.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })
-            }
+            {dateFrom.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })}
           </CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {returnState ? returnValueShow.plus({ month: 2 }).monthShort : valueShow.plus({ month: 2 }).monthShort}
+            {dateFrom.plus({ month: 1 }).monthShort}
           </ButtonNext>
         </Toolbar>
         <TableContainer>
@@ -221,11 +212,10 @@ class Calendar extends PureComponent<Props, State> {
                         key={`day-${Math.random()}`}
                         i={i}
                         w={w}
-                        value={value}
                         selectDate={this.selectDate}
-                        returnValue={returnValue}
-                        returnState={returnState}
-                        valueShow={valueShow}
+                        dateTo={dateTo}
+                        returnState={false}
+                        dateFrom={dateFrom}
                         returnValueShow={returnValueShow}
                       />
                     ))}
@@ -257,11 +247,10 @@ class Calendar extends PureComponent<Props, State> {
                         key={`day1-${Math.random()}`}
                         i={i}
                         w={w + 7}
-                        value={value}
                         selectDate={this.selectDate}
-                        returnValue={returnValue}
-                        returnState={returnState}
-                        valueShow={valueShow}
+                        dateTo={dateTo}
+                        returnState={false}
+                        dateFrom={dateFrom}
                         returnValueShow={returnValueShow}
                       />
                     ))}
