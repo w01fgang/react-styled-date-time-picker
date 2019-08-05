@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import { type DateTime } from 'luxon';
 /** eslint-enable */
 export default (i: number, w: number, value: DateTime): DateTime => {

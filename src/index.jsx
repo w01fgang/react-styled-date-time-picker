@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { PureComponent } from 'react';
 import { type DateTime } from 'luxon';
 /** eslint-enable */

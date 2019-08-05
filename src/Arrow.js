@@ -1,4 +1,4 @@
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { PureComponent } from 'react';
 /** eslint-enable */
 class Arrow extends PureComponent { // eslint-disable-line

@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { Component } from 'react';
 import styled, { type StyledComponent } from 'styled-components';
 import { type DateTime } from 'luxon';

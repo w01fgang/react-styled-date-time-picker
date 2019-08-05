@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { PureComponent } from 'react';
 import styled, { type StyledComponent } from 'styled-components';
 import chunk from 'lodash.chunk';
@@ -26,20 +26,17 @@ const Toolbar: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   justify-content: space-between;
 `;
 
-const ButtonNext = styled.button`
+const Button: StyledComponent<{}, {}, HTMLButtonElement> = styled.button`
   color: #999999;
 
   &:focus {
     outline: none;
   }
 `;
-const ButtonPrev = styled.button`
-  color: #999999;
 
-  &:focus {
-    outline: none;
-  }
-`;
+const ButtonNext: StyledComponent<{}, {}, React$ComponentType<*>> = styled(Button)``;
+
+const ButtonPrev: StyledComponent<{}, {}, React$ComponentType<*>> = styled(Button)``;
 
 const CurrentDate = styled.span`
   color: #00A15F;
@@ -73,25 +70,6 @@ const Td = styled.td`
 `;
 
 const TableBContainer: StyledComponent<{}, {}, HTMLDivElement> = styled.div``;
-const MainButton = styled.button`
-  border: 0;
-  outline: 0;
-  cursor: pointer;
-  line-height: 1;
-  display: block;
-  margin-top: 10px;
-  width: 100%;
-  background-color: #00A15F;
-  padding: 12px 0;
-  text-align: center;
-  color: #f8f8f8;
-  font-size: 16px;
-  border-radius: 3px;
-
-  &:before {
-    margin-right: 6px;
-  }
-`;
 
 type Props = {
   +dateFrom: DateTime,
@@ -109,8 +87,6 @@ type State = {
 class Calendar extends PureComponent<Props, State> {
   static defaultProps = {
     returnState: false,
-    dateTo: DateTime.local(),
-    dateFrom: DateTime.local(),
     returnValueShow: DateTime.local(),
     onSelect: console.log,
     onChangeShow: console.log,
@@ -183,7 +159,7 @@ class Calendar extends PureComponent<Props, State> {
       <CalendarContainer visible={visible}>
         <Toolbar>
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
-            {dateFrom.minus({ month: 1 }).monthShort}
+            {dateFrom.minus({ month: 1 }).toLocaleString({ month: 'short' })}
           </ButtonPrev>
           <CurrentDate>
             {dateFrom.toLocaleString({ month: 'long', year: 'numeric' })}
@@ -192,7 +168,7 @@ class Calendar extends PureComponent<Props, State> {
             {dateFrom.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })}
           </CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {dateFrom.plus({ month: 1 }).monthShort}
+            {dateFrom.plus({ month: 1 }).toLocaleString({ month: 'short' })}
           </ButtonNext>
         </Toolbar>
         <TableContainer>
@@ -223,13 +199,6 @@ class Calendar extends PureComponent<Props, State> {
                 ))}
               </tbody>
             </Table>
-            <MainButton
-              type="button"
-              className="ion-checkmark"
-              onClick={handleConfirmClick}
-            >
-              OK
-            </MainButton>
           </TableBContainer>
           <TableBContainer>
             <Table>
@@ -258,13 +227,6 @@ class Calendar extends PureComponent<Props, State> {
                 ))}
               </tbody>
             </Table>
-            <MainButton
-              type="button"
-              className="ion-checkmark"
-              onClick={handleCancelClick}
-            >
-              Cancel
-            </MainButton>
           </TableBContainer>
         </TableContainer>
       </CalendarContainer>

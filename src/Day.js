@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { PureComponent } from 'react';
 import styled, { type StyledComponent } from 'styled-components';
 import { DateTime } from 'luxon';
@@ -7,12 +7,13 @@ import { DateTime } from 'luxon';
 
 import getDate from './getDate';
 
-type TdProps = {
+type CellProps = {
   active?: boolean,
   inRange?: boolean,
+  hovered?: boolean,
 };
 
-const Td: StyledComponent<TdProps, {}, HTMLTableCellElement> = styled.td`
+const Cell: StyledComponent<CellProps, {}, HTMLTableCellElement> = styled.td`
   padding: 5px 0;
   text-align: center;
   cursor: pointer;
@@ -35,14 +36,15 @@ const Td: StyledComponent<TdProps, {}, HTMLTableCellElement> = styled.td`
   }
 `;
 
-const DisabledTd: StyledComponent<TdProps, {}, React$ComponentType<*>> = styled(Td)`
+const Disabled: StyledComponent<CellProps, {}, React$ComponentType<*>> = styled(Cell)`
   color: #999;
 `;
 
 type Props = {
   i: number,
   w: number,
-  selectDate: Function,
+  selectDate: (day: number) => void,
+  selected: boolean,
   dateFrom: DateTime,
   dateTo: DateTime,
   returnValueShow: DateTime,
@@ -50,10 +52,18 @@ type Props = {
   dateFrom: DateTime,
 };
 
-class Day extends PureComponent<Props> {
+type State = {|
+  +hovered: ?DateTime,
+|};
+
+class Day extends PureComponent<Props, State> {
+  state = {
+    hovered: null,
+  };
+
   handleClick = () => {
-    const { i, w, selectDate } = this.props;
-    selectDate(i, w);
+    const { i, selectDate } = this.props;
+    selectDate(i);
   }
 
   render() {
@@ -68,35 +78,35 @@ class Day extends PureComponent<Props> {
 
       if (currentDate < realDate && returnState) {
         return (
-          <DisabledTd
+          <Disabled
             {...other}
           >
             {i}
-          </DisabledTd>
+          </Disabled>
         );
       }
       if (currentDate > dateFrom && currentDate < dateFrom) {
         return (
-          <Td
+          <Cell
             inRange
             onClick={this.handleClick}
             {...other}
           >
             {i}
-          </Td>
+          </Cell>
         );
       }
     }
 
     if (i != null) {
       return (
-        <Td
+        <Cell
           active={selected}
           onClick={this.handleClick}
           {...other}
         >
           {i}
-        </Td>
+        </Cell>
       );
     }
     return (

@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies, import/no-extraneous-dependencies */
 import React, { Component } from 'react';
 import styled, { type StyledComponent } from 'styled-components';
 import { type DateTime } from 'luxon';
@@ -22,7 +22,8 @@ const TimeContainer: StyledComponent<{ visible: boolean }, {}, HTMLDivElement> =
   align-items: center;
   justify-content: space-around;
   color: #f8f8f8;
-  height: 320px;
+  height: 250px;
+
   & div {
         user-select: none;
   }
@@ -34,7 +35,7 @@ const Options: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   margin-bottom: 4px;
 `;
 
-const Button: StyledComponent<{ active: boolean }, {}, HTMLButtonElement> = styled.button`
+const TabButton: StyledComponent<{ active: boolean }, {}, HTMLButtonElement> = styled.button`
   float: left;
   width: 50%;
   color: ${props => (props.active ? '#f8f8f8' : '#00A15F')};
@@ -70,28 +71,79 @@ const Label: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   text-align: center;
 `;
 
-const labels = {
+const Button = styled.button`
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  line-height: 1;
+  display: block;
+  margin-top: 10px;
+  width: 100%;
+  background-color: #00A15F;
+  padding: 12px 0;
+  text-align: center;
+  color: #f8f8f8;
+  font-size: 16px;
+  border-radius: 3px;
+  flex: 0 0 250px;
+
+  &:before {
+    margin-right: 6px;
+  }
+`;
+
+const messages = {
   ru: {
     date: 'Дата',
     time: 'Время',
+    cancel: 'Отмена',
+    ok: 'Ок',
   },
   en: {
     date: 'Date',
     time: 'Time',
+    cancel: 'Cancel',
+    ok: 'OK',
   },
   it: {
     date: 'Data',
     time: 'Tempo',
+    cancel: 'Cancel',
+    ok: 'OK',
   },
   es: {
     date: 'Fecha',
     time: 'Tiempo',
+    cancel: 'Cancel',
+    ok: 'OK',
   },
   pt: {
     date: 'Data',
     time: 'Hora',
+    cancel: 'Cancel',
+    ok: 'OK',
   },
 };
+
+type Messages = {|
+  +date: string,
+  +time: string,
+  +cancel: string,
+  +ok: string,
+|};
+
+const getLabels = (lang: string = 'en'): Messages => messages[lang];
+
+const Actions = styled.div`
+  display: flex;
+  margin: 0 -15px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  flex: 0 0 50%;
+`;
 
 type Props = {|
   /* Called when user changes on the day of time */
@@ -124,12 +176,18 @@ class DateTimePicker extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { dateFrom, dateTo } = props;
-    console.log('DateTimePicker props', props);
     this.state = {
       tab: 0,
       dateFrom,
       dateTo,
     };
+  }
+
+  selectDate = () => {
+    const { onSelect, onClose } = this.props;
+    const { dateFrom, dateTo } = this.state;
+    onSelect(dateFrom, dateTo);
+    onClose();
   }
 
   switchTabOne = () => this.setState(() => ({ tab: 0 }));
@@ -144,7 +202,15 @@ class DateTimePicker extends Component<Props, State> {
     this.setState(() => ({ dateTo }));
   }
 
-  handleChange = (dateFrom: DateTime, dateTo: DateTime) => this.setState(() => ({ dateFrom, dateTo }));
+  handleChange = (dateFrom: DateTime, dateTo: DateTime) => {
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange(dateFrom, dateTo);
+    }
+    this.setState(() => ({ dateFrom, dateTo }));
+  }
+
+  handleConfirmClick = (dateFrom: DateTime, dateTo: DateTime) => this.setState(() => ({ dateFrom, dateTo }));
 
   render() {
     const {
@@ -154,33 +220,36 @@ class DateTimePicker extends Component<Props, State> {
       language, label, labelStyle, onClose,
     } = this.props;
 
+    const labels = getLabels(language);
+
     return (
       <Container>
         { label
           && <Label style={labelStyle}>{label}</Label>
         }
         <Options>
-          <Button
+          <TabButton
             type="button"
             onClick={this.switchTabOne}
             active={tab === 0}
           >
-            {labels[language].date}
-          </Button>
-          <Button
+            {labels.date}
+          </TabButton>
+          <TabButton
             type="button"
             onClick={this.switchTabTwo}
             active={tab === 1}
           >
-            {labels[language].time}
-          </Button>
+            {labels.time}
+          </TabButton>
         </Options>
 
         <Tabs>
           <Calendar
+            /* $flow: */
             language={language}
             visible={tab === 0}
-            dateFrom={console.log('dateFrom', dateFrom) || dateFrom}
+            dateFrom={dateFrom}
             dateTo={dateTo}
             onChange={this.handleChange}
             switchTab={this.switchTabTwo}
@@ -193,6 +262,14 @@ class DateTimePicker extends Component<Props, State> {
             <Time value={dateTo} onChange={this.handleTimeTo} />
           </TimeContainer>
         </Tabs>
+        <Actions>
+          <ButtonContainer>
+            <Button onClick={this.selectDate}>{labels.ok}</Button>
+          </ButtonContainer>
+          <ButtonContainer>
+            <Button onClick={onClose}>{labels.cancel}</Button>
+          </ButtonContainer>
+        </Actions>
       </Container>
     );
   }
