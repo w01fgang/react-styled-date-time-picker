@@ -10,7 +10,9 @@ import getDate from './getDate';
 type CellProps = {
   active?: boolean,
   inRange?: boolean,
-  hovered?: boolean,
+  hovered?: ?boolean,
+  onMouseOver?: (e: Event) => void,
+  onFocus?: (e: Event) => void,
 };
 
 const Cell: StyledComponent<CellProps, {}, HTMLTableCellElement> = styled.td`
@@ -40,43 +42,38 @@ const Disabled: StyledComponent<CellProps, {}, React$ComponentType<*>> = styled(
   color: #999;
 `;
 
-type Props = {
-  i: number,
-  w: number,
-  selectDate: (day: number) => void,
-  selected: boolean,
-  dateFrom: DateTime,
-  dateTo: DateTime,
-  returnValueShow: DateTime,
-  returnState: boolean,
-  dateFrom: DateTime,
-};
-
-type State = {|
+type Props = {|
+  +i: number,
+  +w: number,
+  +m: number,
+  +selectDate: (day: number, week: number) => void,
+  +onHover: (day: number, month: number) => void,
   +hovered: ?DateTime,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
+  +disabled: boolean,
 |};
 
-class Day extends PureComponent<Props, State> {
-  state = {
-    hovered: null,
-  };
+class Day extends PureComponent<Props> {
+  height = () => {
+    const { i, m, onHover } = this.props;
+    onHover(i, m);
+  }
 
   handleClick = () => {
-    const { i, selectDate } = this.props;
-    selectDate(i);
+    const { i, w, selectDate } = this.props;
+    selectDate(i, w);
   }
 
   render() {
     const {
-      i, w, selectDate, dateFrom, returnState, dateTo, returnValueShow, ...other
+      i, w, selectDate, dateFrom, disabled, dateTo, hovered, ...other
     } = this.props;
-    const currentDate = getDate(i, w, returnState ? returnValueShow : dateTo);
+    const currentDate = getDate(i, w, returnState ? dateFrom : dateTo);
     const selected = (currentDate.day === dateFrom.day && currentDate.month === dateFrom.month && currentDate.year === dateFrom.year && i != null)
       || (currentDate.day === dateFrom.day && currentDate.month === dateFrom.month && currentDate.year === dateFrom.year && i != null);
     if (dateFrom && !selected && i != null) {
-      const realDate = returnState ? dateFrom : DateTime.local();
-
-      if (currentDate < realDate && returnState) {
+      if (disabled) {
         return (
           <Disabled
             {...other}
@@ -85,7 +82,9 @@ class Day extends PureComponent<Props, State> {
           </Disabled>
         );
       }
+
       if (currentDate > dateFrom && currentDate < dateFrom) {
+        console.log('first');
         return (
           <Cell
             inRange
@@ -99,8 +98,13 @@ class Day extends PureComponent<Props, State> {
     }
 
     if (i != null) {
+      console.log('second');
+
       return (
         <Cell
+          onFocus={this.height}
+          onMouseOver={this.height}
+          hovered={false}
           active={selected}
           onClick={this.handleClick}
           {...other}
@@ -109,6 +113,7 @@ class Day extends PureComponent<Props, State> {
         </Cell>
       );
     }
+
     return (
       <td />
     );

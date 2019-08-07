@@ -82,6 +82,7 @@ type Props = {
 type State = {
   first: boolean,
   month: DateTime,
+  hoveredDay: ?DateTime,
 };
 
 class Calendar extends PureComponent<Props, State> {
@@ -90,8 +91,6 @@ class Calendar extends PureComponent<Props, State> {
     returnValueShow: DateTime.local(),
     onSelect: console.log,
     onChangeShow: console.log,
-    handleConfirmClick: console.log,
-    handleCancelClick: console.log,
     onChangeMonth: console.log,
   }
 
@@ -100,7 +99,12 @@ class Calendar extends PureComponent<Props, State> {
     this.state = {
       first: true,
       month: props.dateFrom,
+      hoveredDay: null,
     };
+  }
+
+  setHovered = (hoveredDay: DateTime) => {
+    this.setState(() => ({ hoveredDay }));
   }
 
   selectDate = (i: number, w: number) => {
@@ -133,8 +137,10 @@ class Calendar extends PureComponent<Props, State> {
 
   render() {
     const {
-      dateFrom, visible, language, dateTo, returnValueShow, handleConfirmClick, handleCancelClick,
+      dateFrom, visible, language, dateTo, returnValueShow,
     } = this.props;
+
+    const { hoveredDay } = this.state;
 
     let d3;
     let d4;
@@ -188,11 +194,13 @@ class Calendar extends PureComponent<Props, State> {
                         key={`day-${Math.random()}`}
                         i={i}
                         w={w}
+                        m={dateFrom.month}
                         selectDate={this.selectDate}
                         dateTo={dateTo}
-                        returnState={false}
                         dateFrom={dateFrom}
-                        returnValueShow={returnValueShow}
+                        hovered={hoveredDay}
+                        onHover={this.setHovered}
+                        disabled={dateFrom.day < DateTime.local().day}
                       />
                     ))}
                   </tr>
@@ -216,11 +224,13 @@ class Calendar extends PureComponent<Props, State> {
                         key={`day1-${Math.random()}`}
                         i={i}
                         w={w + 7}
+                        m={dateTo.month}
                         selectDate={this.selectDate}
                         dateTo={dateTo}
-                        returnState={false}
                         dateFrom={dateFrom}
-                        returnValueShow={returnValueShow}
+                        hovered={hoveredDay}
+                        onHover={this.setHovered}
+                        disabled={dateFrom.day < dateTo.day}
                       />
                     ))}
                   </tr>

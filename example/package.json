@@ -5,13 +5,13 @@
   "dependencies": {
     "lodash.chunk": "^4.2.0",
     "lodash.range": "^3.2.0",
-    "luxon": "^0.5.3",
+    "luxon": "^1.17.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-page-click": "^4.0.2",
-    "react-scripts": "1.1.1",
-    "react-styled-date-time-picker": "1.0.3",
-    "styled-components": "^4.0.2"
+    "react-page-click": "^4.0.3",
+    "react-scripts": "3.0.1",
+    "react-styled-date-time-picker": "1.0.4",
+    "styled-components": "^4.3.2"
   },
   "scripts": {
     "start": "react-scripts start",

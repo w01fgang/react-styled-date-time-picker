@@ -1,7 +1,7 @@
 import React from 'react';
 
-import DateTimePicker from '../../';
 import { DateTime } from 'luxon';
+import DateTimePicker from '../..';
 
 
 class App extends React.Component {
@@ -12,7 +12,7 @@ class App extends React.Component {
       toDate: DateTime.local().plus({ days: 1 }),
       open: false,
       dateState: 'dateFrom',
-      timeState: 'timeFrom'
+      timeState: 'timeFrom',
     };
   }
 
@@ -21,21 +21,21 @@ class App extends React.Component {
       this.setState({ toDate: date });
     } else {
       this.setState({ fromDate: date });
-      this.setState({ toDate: date});
+      this.setState({ toDate: date });
     }
   }
 
   changeTimeStatus = () => {
-    this.setState({timeState: 'timeTo', dateState: 'dateFrom'})
+    this.setState({ timeState: 'timeTo', dateState: 'dateFrom' });
   }
 
   togglePicker = () => this.setState(({ open }) => ({ open: !open }));
 
   changeDateStatus = () => {
     if (this.state.dateState === 'dateTo') {
-      this.setState({dateState: 'dateFrom'})
+      this.setState({ dateState: 'dateFrom' });
     } else {
-      this.setState({dateState: 'dateTo'})
+      this.setState({ dateState: 'dateTo' });
     }
   }
 
