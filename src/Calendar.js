@@ -7,8 +7,6 @@ import { DateTime } from 'luxon';
 /** eslint-enable */
 import Day from './Day';
 
-window.DateTime = DateTime;
-
 const getWeeks = (date: DateTime) => {
   const firstDay = date.startOf('week');
   return Array(7).fill(1).map((el, i) => firstDay.plus({ day: i }).weekdayShort);
@@ -189,7 +187,7 @@ class Calendar extends PureComponent<Props, State> {
                         dateFrom={dateFrom}
                         hovered={hoveredDay}
                         onHover={this.setHovered}
-                        disabled={+dateFrom.set({ day: i }) < +DateTime.local()}
+                        disabled={+month.set({ day: i }) < +DateTime.local()}
                       />
                     ))}
                   </tr>
