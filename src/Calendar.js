@@ -171,7 +171,7 @@ class Calendar extends PureComponent<Props, State> {
             {month.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })}
           </CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {month.plus({ month: 1 }).toLocaleString({ month: 'short' })}
+            {month.plus({ month: 2 }).toLocaleString({ month: 'short' })}
           </ButtonNext>
         </Toolbar>
         <TableContainer>
