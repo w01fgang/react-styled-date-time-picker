@@ -6,7 +6,8 @@ import chunk from 'lodash.chunk';
 import { DateTime } from 'luxon';
 /** eslint-enable */
 import Day from './Day';
-import getDate from './getDate';
+
+window.DateTime = DateTime;
 
 const getWeeks = (date: DateTime) => {
   const firstDay = date.startOf('week');
@@ -86,14 +87,6 @@ type State = {
 };
 
 class Calendar extends PureComponent<Props, State> {
-  static defaultProps = {
-    returnState: false,
-    returnValueShow: DateTime.local(),
-    onSelect: console.log,
-    onChangeShow: console.log,
-    onChangeMonth: console.log,
-  }
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -107,48 +100,45 @@ class Calendar extends PureComponent<Props, State> {
     this.setState(() => ({ hoveredDay }));
   }
 
-  selectDate = (i: number, w: number) => {
+  selectDate = (date: DateTime) => {
     const { dateFrom, dateTo, onChange } = this.props;
 
     const { first } = this.state;
 
     if (first) {
-      onChange(getDate(i, w, dateFrom), dateTo);
+      onChange(date, +dateTo < +date ? date.plus({ days: 1 }) : dateTo);
     } else {
-      onChange(dateFrom, getDate(i, w, dateTo));
+      onChange(dateFrom, date);
     }
     this.setState(state => ({ first: !state.first }));
   }
 
   prevMonth = () => {
     const { month } = this.state;
-    const { dateFrom, onChangeMonth } = this.props;
+    const nextMonth = month.minus({ month: 1 });
+    if (nextMonth.month < DateTime.local().month) {
+      return;
+    }
 
-    const date = dateFrom.set({ day: 1 });
-    onChangeMonth(date.minus({ month: 2 }));
+    this.setState(() => ({ month: nextMonth }));
   }
 
   nextMonth = () => {
-    const { month } = this.state;
-    const { dateFrom, onChangeMonth } = this.props;
-    const date = dateFrom.set({ day: 1 });
-    onChangeMonth(date.plus({ month: 2 }));
+    this.setState(({ month }) => ({ month: month.plus({ month: 1 }) }));
   }
 
   render() {
     const {
-      dateFrom, visible, language, dateTo, returnValueShow,
+      dateFrom, visible, language, dateTo,
     } = this.props;
 
-    const { hoveredDay } = this.state;
+    const { hoveredDay, month } = this.state;
 
-    let d3;
-    let d4;
-    d3 = dateFrom.endOf('month').day;
-    d4 = dateFrom.plus({ month: 1 }).endOf('month').day;
+    const d3 = month.endOf('month').day;
+    const d4 = month.plus({ month: 1 }).endOf('month').day;
 
-    const d5 = dateFrom.set({ day: 1 }).weekday;
-    const d6 = returnValueShow.plus({ month: 1 }).set({ day: 1 }).weekday;
+    const d5 = month.set({ day: 1 }).weekday;
+    const d6 = month.plus({ month: 1 }).set({ day: 1 }).weekday;
     const dd = new Array(d5 - 1).fill(null);
     const ds = new Array(d6 - 1).fill(null);
     const days = [
@@ -165,16 +155,16 @@ class Calendar extends PureComponent<Props, State> {
       <CalendarContainer visible={visible}>
         <Toolbar>
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
-            {dateFrom.minus({ month: 1 }).toLocaleString({ month: 'short' })}
+            {month.minus({ month: 1 }).toLocaleString({ month: 'short' })}
           </ButtonPrev>
           <CurrentDate>
-            {dateFrom.toLocaleString({ month: 'long', year: 'numeric' })}
+            {month.toLocaleString({ month: 'long', year: 'numeric' })}
           </CurrentDate>
           <CurrentDate>
-            {dateFrom.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })}
+            {month.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })}
           </CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {dateFrom.plus({ month: 1 }).toLocaleString({ month: 'short' })}
+            {month.plus({ month: 1 }).toLocaleString({ month: 'short' })}
           </ButtonNext>
         </Toolbar>
         <TableContainer>
@@ -182,7 +172,7 @@ class Calendar extends PureComponent<Props, State> {
             <Table>
               <thead>
                 <tr>
-                  {getWeeks(dateFrom.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
+                  {getWeeks(month.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
                 </tr>
               </thead>
 
@@ -192,15 +182,14 @@ class Calendar extends PureComponent<Props, State> {
                     {row.map(i => (
                       <Day
                         key={`day-${Math.random()}`}
+                        date={month.set({ day: i })}
                         i={i}
-                        w={w}
-                        m={dateFrom.month}
                         selectDate={this.selectDate}
                         dateTo={dateTo}
                         dateFrom={dateFrom}
                         hovered={hoveredDay}
                         onHover={this.setHovered}
-                        disabled={dateFrom.day < DateTime.local().day}
+                        disabled={+dateFrom.set({ day: i }) < +DateTime.local()}
                       />
                     ))}
                   </tr>
@@ -212,7 +201,7 @@ class Calendar extends PureComponent<Props, State> {
             <Table>
               <thead>
                 <tr>
-                  {getWeeks(dateTo.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
+                  {getWeeks(month.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
                 </tr>
               </thead>
 
@@ -222,15 +211,14 @@ class Calendar extends PureComponent<Props, State> {
                     {row.map(i => (
                       <Day
                         key={`day1-${Math.random()}`}
+                        date={month.plus({ month: 1 }).set({ day: i })}
                         i={i}
-                        w={w + 7}
-                        m={dateTo.month}
                         selectDate={this.selectDate}
                         dateTo={dateTo}
                         dateFrom={dateFrom}
                         hovered={hoveredDay}
                         onHover={this.setHovered}
-                        disabled={dateFrom.day < dateTo.day}
+                        disabled={false}
                       />
                     ))}
                   </tr>

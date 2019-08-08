@@ -5,7 +5,7 @@ import styled, { type StyledComponent } from 'styled-components';
 import { DateTime } from 'luxon';
 /** eslint-enable */
 
-import getDate from './getDate';
+const equalDates = (d1: DateTime, d2: DateTime) => d1.hasSame(d2, 'day') && d1.hasSame(d2, 'month') && d1.hasSame(d2, 'year');
 
 type CellProps = {
   active?: boolean,
@@ -21,10 +21,10 @@ const Cell: StyledComponent<CellProps, {}, HTMLTableCellElement> = styled.td`
   cursor: pointer;
   color: ${props => (props.active || props.inRange ? '#f8f8f8' : '#191F26')};
   background-color: ${(props) => {
-    if (props.inRange) {
+    if (props.active) {
       return '#008950';
     }
-    if (props.active) {
+    if (props.inRange) {
       return '#00A15F';
     }
     return '#f8f8f8';
@@ -43,11 +43,10 @@ const Disabled: StyledComponent<CellProps, {}, React$ComponentType<*>> = styled(
 `;
 
 type Props = {|
+  +date: DateTime,
   +i: number,
-  +w: number,
-  +m: number,
-  +selectDate: (day: number, week: number) => void,
-  +onHover: (day: number, month: number) => void,
+  +selectDate: (date: DateTime) => void,
+  +onHover: (date: DateTime) => void,
   +hovered: ?DateTime,
   +dateFrom: DateTime,
   +dateTo: DateTime,
@@ -56,22 +55,21 @@ type Props = {|
 
 class Day extends PureComponent<Props> {
   height = () => {
-    const { i, m, onHover } = this.props;
-    onHover(i, m);
+    const { date, onHover } = this.props;
+    onHover(date);
   }
 
   handleClick = () => {
-    const { i, w, selectDate } = this.props;
-    selectDate(i, w);
+    const { date, selectDate } = this.props;
+    selectDate(date);
   }
 
   render() {
     const {
-      i, w, selectDate, dateFrom, disabled, dateTo, hovered, ...other
+      i, selectDate, dateFrom, disabled, dateTo, hovered, date, onHover, ...other
     } = this.props;
-    const currentDate = getDate(i, w, returnState ? dateFrom : dateTo);
-    const selected = (currentDate.day === dateFrom.day && currentDate.month === dateFrom.month && currentDate.year === dateFrom.year && i != null)
-      || (currentDate.day === dateFrom.day && currentDate.month === dateFrom.month && currentDate.year === dateFrom.year && i != null);
+    const selected = equalDates(date, dateFrom) || equalDates(date, dateTo);
+
     if (dateFrom && !selected && i != null) {
       if (disabled) {
         return (
@@ -83,11 +81,12 @@ class Day extends PureComponent<Props> {
         );
       }
 
-      if (currentDate > dateFrom && currentDate < dateFrom) {
+      if (+date > +dateFrom && +date < +dateTo) {
         console.log('first');
         return (
           <Cell
             inRange
+            active={selected}
             onClick={this.handleClick}
             {...other}
           >
@@ -98,13 +97,11 @@ class Day extends PureComponent<Props> {
     }
 
     if (i != null) {
-      console.log('second');
-
       return (
         <Cell
           onFocus={this.height}
-          onMouseOver={this.height}
-          hovered={false}
+          onMouseEnter={this.height}
+          hovered={Boolean(hovered)}
           active={selected}
           onClick={this.handleClick}
           {...other}

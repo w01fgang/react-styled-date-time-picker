@@ -195,10 +195,18 @@ class DateTimePicker extends Component<Props, State> {
   switchTabTwo = () => this.setState(() => ({ tab: 1 }));
 
   handleTimeFrom = (dateFrom: DateTime) => {
+    const { onChange, dateTo } = this.props;
+    if (onChange) {
+      onChange(dateFrom, dateTo);
+    }
     this.setState(() => ({ dateFrom }));
   }
 
   handleTimeTo = (dateTo: DateTime) => {
+    const { onChange, dateFrom } = this.props;
+    if (onChange) {
+      onChange(dateFrom, dateTo);
+    }
     this.setState(() => ({ dateTo }));
   }
 
@@ -224,9 +232,8 @@ class DateTimePicker extends Component<Props, State> {
 
     return (
       <Container>
-        { label
-          && <Label style={labelStyle}>{label}</Label>
-        }
+        {label && <Label style={labelStyle}>{label}</Label>}
+
         <Options>
           <TabButton
             type="button"
@@ -246,7 +253,7 @@ class DateTimePicker extends Component<Props, State> {
 
         <Tabs>
           <Calendar
-            /* $flow: */
+              /* $flow: don't see defaultProps */
             language={language}
             visible={tab === 0}
             dateFrom={dateFrom}

@@ -10,6 +10,7 @@
     "start": "webpack --watch",
     "build": "webpack",
     "flow": "glow",
+    "lint": "eslint src",
     "prepublish": "npm run build"
   },
   "dependencies": {

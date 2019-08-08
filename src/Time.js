@@ -73,9 +73,9 @@ const ArrowDownContainer = styled(ArrowContainer)`
 `;
 
 const addZeroInFront = (value: number): string => (
-  value >= 0 && value < 10
+  value < 10
     ? `0${value}`
-    : String(value)
+    : `${value}`
 );
 
 type Props = {|
@@ -94,7 +94,11 @@ class Time extends Component<Props, State> {
     editMinutes: false,
   };
 
-  getHours = (e: SyntheticInputEvent<HTMLInputElement>) => {
+  hours: ?HTMLInputElement;
+
+  minutes: ?HTMLInputElement;
+
+  updateHours = (e: SyntheticInputEvent<HTMLInputElement>) => {
     const {
       value, onChange,
     } = this.props;
@@ -104,7 +108,7 @@ class Time extends Component<Props, State> {
     this.editHours();
   }
 
-  getMinutes = (e: SyntheticInputEvent<HTMLInputElement>) => {
+  updateMinutes = (e: SyntheticInputEvent<HTMLInputElement>) => {
     const {
       value, onChange,
     } = this.props;
@@ -141,17 +145,13 @@ class Time extends Component<Props, State> {
 
   minutesUp = () => {
     const { value, onChange } = this.props;
-    onChange(value.plus({ minute: 1 }));
+    onChange(value.plus({ minute: 5 }));
   }
 
   minutesDown = () => {
     const { value, onChange } = this.props;
-    onChange(value.minus({ minute: 1 }));
+    onChange(value.minus({ minute: 5 }));
   }
-
-  hours: ?HTMLInputElement;
-
-  minutes: ?HTMLInputElement;
 
   render() {
     const { editHours, editMinutes } = this.state;
@@ -171,7 +171,7 @@ class Time extends Component<Props, State> {
             type="text"
             key={1}
             defaultValue={value.hour}
-            onBlur={this.getHours}
+            onBlur={this.updateHours}
             min={0}
             max={23}
             ref={(node) => { this.hours = node; }}
@@ -186,7 +186,7 @@ class Time extends Component<Props, State> {
             key={2}
             className="time"
             defaultValue={value.minute}
-            onBlur={this.getMinutes}
+            onBlur={this.updateMinutes}
             min={0}
             max={23}
             ref={(node) => { this.minutes = node; }}
