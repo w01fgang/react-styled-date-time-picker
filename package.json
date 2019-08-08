@@ -1,6 +1,6 @@
 {
   "name": "react-styled-date-time-picker",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "main": "build/index.js",
   "author": "w01fgang <sumin@unix-center.ru> (http://v-tour.pro/)",
   "license": "MIT",
@@ -18,7 +18,7 @@
     "lodash.range": "^3.2.0",
     "luxon": "^0.5.3",
     "react": "^16.8.6",
-    "react-page-click": "^4.0.2",
+    "react-dom": "^16.8.6",
     "styled-components": "^4.0.2"
   },
   "devDependencies": {
@@ -49,9 +49,9 @@
     "flow-runtime": "0.17.0",
     "flow-typed": "2.6.1",
     "glow": "1.2.2",
-    "webpack": "3.12.0",
     "husky": "1.1.1",
-    "lint-staged": "7.3.0"
+    "lint-staged": "7.3.0",
+    "webpack": "3.12.0"
   },
   "babel": {
     "plugins": [

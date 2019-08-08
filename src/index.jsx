@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { type DateTime } from 'luxon';
 /** eslint-enable */
 
@@ -8,6 +9,7 @@ import Modal from './Modal';
 import DateTimePicker from './DateTimePicker';
 
 type Props = {|
+  id?: ?string,
   /* Date picker open/close state */
   +open: boolean,
   /* Label at the top of date picker window */
@@ -29,6 +31,7 @@ type Props = {|
 
 class Picker extends PureComponent<Props> {
   static defaultProps = {
+    id: null,
     language: 'en',
     onChange: null,
     label: '',
@@ -36,19 +39,34 @@ class Picker extends PureComponent<Props> {
     closeOnOutsideClick: true,
   }
 
+  root: ?HTMLDivElement;
+
+  componentDidMount() {
+    const { id } = this.props;
+    const div = document.createElement('div');
+    div.id = id || 'react-stiled-date-time-picker';
+    if (document.body) {
+      document.body.appendChild(div);
+    }
+    this.root = div;
+  }
+
   render() {
     const {
-      open, onClose, closeOnOutsideClick, ...other
+      open, onClose, closeOnOutsideClick, id, ...other
     } = this.props;
 
-    if (!open) {
+    if (!open || !this.root) {
       return null;
     }
 
-    return (
-      <Modal closeOnOutsideClick={closeOnOutsideClick} onClose={onClose}>
-        <DateTimePicker {...other} onClose={onClose} />
-      </Modal>
+    return ReactDOM.createPortal(
+      (
+        <Modal closeOnOutsideClick={closeOnOutsideClick} onClose={onClose}>
+          <DateTimePicker {...other} onClose={onClose} />
+        </Modal>
+      ),
+      this.root,
     );
   }
 }

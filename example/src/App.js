@@ -10,7 +10,7 @@ class App extends React.Component {
     this.state = {
       fromDate: DateTime.local().set({ hours: 10, minutes: 0 }),
       toDate: DateTime.local().plus({ days: 1 }).set({ hours: 10, minutes: 0 }),
-      open: true,
+      open: false,
     };
   }
 

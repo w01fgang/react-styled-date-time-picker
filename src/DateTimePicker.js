@@ -108,19 +108,19 @@ const messages = {
   it: {
     date: 'Data',
     time: 'Tempo',
-    cancel: 'Cancel',
+    cancel: 'Cancella',
     ok: 'OK',
   },
   es: {
     date: 'Fecha',
     time: 'Tiempo',
-    cancel: 'Cancel',
+    cancel: 'Cancelar',
     ok: 'OK',
   },
   pt: {
     date: 'Data',
     time: 'Hora',
-    cancel: 'Cancel',
+    cancel: 'Cancelar',
     ok: 'OK',
   },
 };
@@ -175,11 +175,13 @@ class DateTimePicker extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { dateFrom, dateTo } = props;
+    const { dateFrom, dateTo, language } = props;
     this.state = {
       tab: 0,
-      dateFrom,
-      dateTo,
+      /* $flow: don't see defaultProps */
+      dateFrom: dateFrom.setLocale(language),
+      /* $flow: don't see defaultProps */
+      dateTo: dateTo.setLocale(language),
     };
   }
 
