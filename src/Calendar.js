@@ -26,7 +26,16 @@ const Toolbar: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
 `;
 
 const Button: StyledComponent<{}, {}, HTMLButtonElement> = styled.button`
-  color: #999999;
+  color: rgb(25, 31, 38);
+  background: transparent;
+  border: 1px solid rgb(0, 161, 95);
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover {
+    color: rgb(248, 248, 248);
+    background-color: rgb(0, 161, 95);
+  }
 
   &:focus {
     outline: none;
