@@ -1,15 +1,15 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies, import/no-extraneous-dependencies */
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import styled, { type StyledComponent } from 'styled-components';
 import { type DateTime } from 'luxon';
 /** eslint-enable */
 import Calendar from './Calendar';
 import Time from './Time';
 
-const Container = styled.div`
+const Container: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   display: inline-block;
-  width: 270px;
+  width: 585px;
   padding: 12px 15px;
   border-radius: 3px;
   border: 1px solid #dfe0e4;
@@ -17,13 +17,25 @@ const Container = styled.div`
   background: rgba(255, 255, 255, 1);
 `;
 
-const Options = styled.div`
+const TimeContainer: StyledComponent<{ visible: boolean }, {}, HTMLDivElement> = styled.div`
+  display: ${props => (props.visible ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: space-around;
+  color: #f8f8f8;
+  height: 250px;
+
+  & div {
+        user-select: none;
+  }
+`;
+
+const Options: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   width: 100%;
   display: inline-block;
   margin-bottom: 4px;
 `;
 
-const Button = styled.button`
+const TabButton: StyledComponent<{ active: boolean }, {}, HTMLButtonElement> = styled.button`
   float: left;
   width: 50%;
   color: ${props => (props.active ? '#f8f8f8' : '#00A15F')};
@@ -33,6 +45,8 @@ const Button = styled.button`
   padding: 7px;
   border: 1px solid #00A15F;
   border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
 
   &:first-child {
     border-top-right-radius: 0;
@@ -49,11 +63,17 @@ const Button = styled.button`
   }
 `;
 
-const Tabs = styled.div`
+const Tabs: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   margin-bottom: 11px;
 `;
 
-const MainButton = styled.button`
+const Label: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
+  margin: 10px auto;
+  margin-top: 0;
+  text-align: center;
+`;
+
+const Button = styled.button`
   border: 0;
   outline: 0;
   cursor: pointer;
@@ -67,170 +87,200 @@ const MainButton = styled.button`
   color: #f8f8f8;
   font-size: 16px;
   border-radius: 3px;
+  flex: 0 0 250px;
 
   &:before {
     margin-right: 6px;
   }
 `;
 
-const Label = styled.div`
-  margin: 10px auto;
-  margin-top: 0;
-  text-align: center;
-`;
-
-const labels = {
+const messages = {
   ru: {
     date: 'Дата',
     time: 'Время',
+    cancel: 'Отмена',
+    ok: 'Ок',
   },
   en: {
     date: 'Date',
     time: 'Time',
+    cancel: 'Cancel',
+    ok: 'OK',
   },
   it: {
     date: 'Data',
     time: 'Tempo',
+    cancel: 'Cancella',
+    ok: 'OK',
   },
   es: {
     date: 'Fecha',
     time: 'Tiempo',
+    cancel: 'Cancelar',
+    ok: 'OK',
   },
   pt: {
     date: 'Data',
     time: 'Hora',
+    cancel: 'Cancelar',
+    ok: 'OK',
   },
 };
 
-type Props = {
-  onChange: Function,
-  onSelect: Function,
-  onClose: Function,
-  value: DateTime,
-  returnValue: DateTime,
-  returnState: boolean,
-  language?: Language,
-  label: string,
-  labelStyle: Object,
-};
+type Messages = {|
+  +date: string,
+  +time: string,
+  +cancel: string,
+  +ok: string,
+|};
 
-type State = {
-  tab: 0 | 1,
-  date: DateTime,
-};
+const getLabels = (lang: string = 'en'): Messages => messages[lang];
+
+const Actions = styled.div`
+  display: flex;
+  margin: 0 -15px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  flex: 0 0 50%;
+`;
+
+type Props = {|
+  /* Called when user changes on the day of time */
+  onChange?: (dateFrom: DateTime, dateTo: DateTime) => void,
+  /* Called when user click OK */
+  +onSelect: (dateFrom: DateTime, dateTo: DateTime) => void,
+  /* Called when user closes the picker */
+  +onClose: () => void,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
+  language?: Language,
+  label?: string,
+  labelStyle?: $Shape<CSSStyleDeclaration>,
+|};
+
+type State = {|
+  +tab: 0 | 1,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
+|};
 
 class DateTimePicker extends Component<Props, State> {
   static defaultProps = {
     language: 'en',
+    onChange: null,
+    label: '',
+    labelStyle: {},
   }
 
   constructor(props: Props) {
     super(props);
+    const { dateFrom, dateTo, language } = props;
     this.state = {
       tab: 0,
-      date: props.value,
+      /* $flow: don't see defaultProps */
+      dateFrom: dateFrom.setLocale(language),
+      /* $flow: don't see defaultProps */
+      dateTo: dateTo.setLocale(language),
     };
   }
 
-  handleClickTab = (tab: 0 | 1, e: Event) => {
-    if (e) e.preventDefault();
-    this.setState(() => ({ tab }));
-  }
-
-  switchTabOne = (e: Event) => this.handleClickTab(0, e);
-
-  switchTabTwo = (e: Event) => this.handleClickTab(1, e);
-
-  handleChange = (date: DateTime): ?Object => {
-    const { onChange } = this.props;
-
-    this.setState({
-      date,
-    });
-    return onChange(date);
-  }
-
-  handleConfirmClick = () => {
-    const { onSelect } = this.props;
-    const { date } = this.state;
-
-    this.setState({
-      tab: 0,
-    });
-    onSelect(date);
-  }
-
-  handleCancelClick = () => {
-    const { onClose } = this.props;
-
-    this.setState({
-      tab: 0,
-    });
+  selectDate = () => {
+    const { onSelect, onClose } = this.props;
+    const { dateFrom, dateTo } = this.state;
+    onSelect(dateFrom, dateTo);
     onClose();
   }
 
+  switchTabOne = () => this.setState(() => ({ tab: 0 }));
+
+  switchTabTwo = () => this.setState(() => ({ tab: 1 }));
+
+  handleTimeFrom = (dateFrom: DateTime) => {
+    const { onChange, dateTo } = this.props;
+    if (onChange) {
+      onChange(dateFrom, dateTo);
+    }
+    this.setState(() => ({ dateFrom }));
+  }
+
+  handleTimeTo = (dateTo: DateTime) => {
+    const { onChange, dateFrom } = this.props;
+    if (onChange) {
+      onChange(dateFrom, dateTo);
+    }
+    this.setState(() => ({ dateTo }));
+  }
+
+  handleChange = (dateFrom: DateTime, dateTo: DateTime) => {
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange(dateFrom, dateTo);
+    }
+    this.setState(() => ({ dateFrom, dateTo }));
+  }
+
+  handleConfirmClick = (dateFrom: DateTime, dateTo: DateTime) => this.setState(() => ({ dateFrom, dateTo }));
+
   render() {
-    const { tab } = this.state;
     const {
-      value, language, label, labelStyle, returnValue, returnState,
+      tab, dateFrom, dateTo,
+    } = this.state;
+    const {
+      language, label, labelStyle, onClose,
     } = this.props;
+
+    const labels = getLabels(language);
 
     return (
       <Container>
-        { label
-          && <Label style={labelStyle}>{label}</Label>
-        }
+        {label && <Label style={labelStyle}>{label}</Label>}
+
         <Options>
-          <Button
+          <TabButton
             type="button"
             onClick={this.switchTabOne}
             active={tab === 0}
           >
-            {labels[language].date}
-          </Button>
-          <Button
+            {labels.date}
+          </TabButton>
+          <TabButton
             type="button"
             onClick={this.switchTabTwo}
             active={tab === 1}
           >
-            {labels[language].time}
-          </Button>
+            {labels.time}
+          </TabButton>
         </Options>
 
         <Tabs>
           <Calendar
+              /* $flow: don't see defaultProps */
             language={language}
             visible={tab === 0}
-            value={value}
+            dateFrom={dateFrom}
+            dateTo={dateTo}
             onChange={this.handleChange}
             switchTab={this.switchTabTwo}
-            returnValue={returnValue}
-            returnState={returnState}
+            onSelect={this.handleConfirmClick}
+            cancel={onClose}
           />
-          <Time
-            language={language}
-            visible={tab === 1}
-            value={value}
-            onChange={this.handleChange}
-            returnValue={returnValue}
-            returnState={returnState}
-          />
-        </Tabs>
 
-        <MainButton
-          type="button"
-          className="ion-checkmark"
-          onClick={this.handleConfirmClick}
-        >
-          OK
-        </MainButton>
-        <MainButton
-          type="button"
-          className="ion-checkmark"
-          onClick={this.handleCancelClick}
-        >
-          Cancel
-        </MainButton>
+          <TimeContainer visible={tab === 1}>
+            <Time value={dateFrom} onChange={this.handleTimeFrom} />
+            <Time value={dateTo} onChange={this.handleTimeTo} />
+          </TimeContainer>
+        </Tabs>
+        <Actions>
+          <ButtonContainer>
+            <Button onClick={this.selectDate}>{labels.ok}</Button>
+          </ButtonContainer>
+          <ButtonContainer>
+            <Button onClick={onClose}>{labels.cancel}</Button>
+          </ButtonContainer>
+        </Actions>
       </Container>
     );
   }

@@ -1,109 +1,57 @@
-import React, { Component } from 'react';
+import React from 'react';
+
 import { DateTime } from 'luxon';
+import DateTimePicker from 'react-styled-date-time-picker';
 
-import DateTimePicker from '../../';
 
-class App extends Component {
-  state = {
-    open: false,
-    returnState: false,
-    date: DateTime.local(),
-    returnDate: DateTime.local(),
-  }
-
-  setDate = (date) => {
-    const { returnState } = this.state;
-
-    if (returnState) {
-      this.setState({
-        returnDate: date,
-      });
-    } else {
-      this.setState({
-        date,
-        returnDate: date,
-      });
-    }
-  }
-
-  // receives selected date (DateTime object) as only argument
-  handleSelect = () => {
-    const { returnState } = this.state;
-
-    if (returnState) {
-      this.setState({
-        open: false,
-        returnState: false,
-      });
-    } else {
-      this.setState({
-        open: true,
-        returnState: true,
-      });
-    }
-  }
-
-  setReturnDate = (date) => {
-    this.setState({
-      returnDate: date,
-    });
-  }
-
-  openDatePicker = () => {
-    this.setState({
-      open: true,
-      returnState: false,
-    });
-  }
-
-  closeDatePickerAndOpenReturnDatePicker = () => {
-    this.setState({
-      returnState: true,
-      open: true,
-    });
-  }
-
-  closeDatePicker = () => {
-    this.setState({
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fromDate: DateTime.local().set({ hours: 10, minutes: 0 }),
+      toDate: DateTime.local().plus({ days: 1 }).set({ hours: 10, minutes: 0 }),
       open: false,
-      returnState: false,
-    });
+    };
   }
+
+  setDate = (fromDate, toDate) => {
+    this.setState({ fromDate, toDate });
+  }
+
+  togglePicker = () => this.setState(({ open }) => ({ open: !open }));
 
   render() {
-    const {
-      date, returnDate, open, returnState,
-    } = this.state;
+    const { open, fromDate, toDate } = this.state;
+
     return (
-      <div className="App">
-        <button type="button" onClick={this.openDatePicker}>
-          Open DatePicker
-        </button>
-        <br />
-        <button type="button" onClick={this.closeDatePickerAndOpenReturnDatePicker}>
-          Open return DatePicker
-        </button>
-        <p>
-          Date:
-          {`${date.day}.${date.month}.${date.year} ${date.hour}:${date.minute}`}
-          <br />
-          Return Date:
-          {`${returnDate.day}.${returnDate.month}.${returnDate.year} ${returnDate.hour}:${returnDate.minute}`}
-        </p>
+      <div>
+        <div>
+          <input
+            onClick={this.togglePicker}
+            value={fromDate.toFormat('dd/MM/yyyy HH:mm')}
+            readOnly
+          />
+        </div>
+        <div>
+          <input
+            onClick={this.togglePicker}
+            value={toDate.toFormat('dd/MM/yyyy HH:mm')}
+            readOnly
+          />
+        </div>
         <DateTimePicker
           open={open}
-          value={date}
-          returnValue={returnDate}
+          dateFrom={fromDate}
+          dateTo={toDate}
+          onSelect={this.setDate}
           onChange={this.setDate}
-          onSelect={this.handleSelect}
-          onClose={this.closeDatePicker}
+          onClose={this.togglePicker}
           language="en"
-          label={returnState ? 'Return' : 'Get'}
+          label="Select date range"
           labelStyle={{
             fontSize: 20,
-            color: 'black',
+            color: '#263238',
           }}
-          returnState={returnState}
         />
       </div>
     );

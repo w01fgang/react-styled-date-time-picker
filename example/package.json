@@ -5,18 +5,29 @@
   "dependencies": {
     "lodash.chunk": "^4.2.0",
     "lodash.range": "^3.2.0",
-    "luxon": "^0.5.3",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-page-click": "^4.0.2",
-    "react-scripts": "1.1.1",
-    "react-styled-date-time-picker": "^0.1.8",
-    "styled-components": "^3.2.1"
+    "luxon": "^1.17.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "react-styled-date-time-picker": "2.0.4",
+    "styled-components": "^4.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

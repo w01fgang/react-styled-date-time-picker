@@ -9,5 +9,10 @@ flow-typed
 [lints]
 
 [options]
+emoji=true
+suppress_comment=\\(.\\|\n\\)*\\$flow:
+sharedmemory.hash_table_pow=21
+server.max_workers=4
+lazy_mode=fs
 
 [strict]

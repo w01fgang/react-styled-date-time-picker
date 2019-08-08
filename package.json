@@ -1,6 +1,6 @@
 {
   "name": "react-styled-date-time-picker",
-  "version": "1.0.3",
+  "version": "2.0.8",
   "main": "build/index.js",
   "author": "w01fgang <sumin@unix-center.ru> (http://v-tour.pro/)",
   "license": "MIT",
@@ -10,15 +10,15 @@
     "start": "webpack --watch",
     "build": "webpack",
     "flow": "glow",
+    "lint": "eslint src",
     "prepublish": "npm run build"
   },
-  "dependencies": {},
-  "peerDependencies": {
+  "dependencies": {
     "lodash.chunk": "^4.2.0",
     "lodash.range": "^3.2.0",
-    "luxon": "^0.4.0",
-    "react": "^16.0.0",
-    "react-page-click": "^4.0.2",
+    "luxon": "^0.5.3",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "styled-components": "^4.0.2"
   },
   "devDependencies": {
@@ -40,8 +40,8 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "eslint": "^5.16.0",
-    "eslint-config-airbnb": "17.1.0",
-    "eslint-plugin-flowtype": "3.10.4",
+    "eslint-config-airbnb": "17.1.1",
+    "eslint-plugin-flowtype": "3.13.0",
     "eslint-plugin-import": "2.18.2",
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.14.3",
@@ -49,9 +49,9 @@
     "flow-runtime": "0.17.0",
     "flow-typed": "2.6.1",
     "glow": "1.2.2",
-    "webpack": "3.12.0",
     "husky": "1.1.1",
-    "lint-staged": "7.3.0"
+    "lint-staged": "7.3.0",
+    "webpack": "3.12.0"
   },
   "babel": {
     "plugins": [
@@ -90,5 +90,10 @@
         "example"
       ]
     }
+  },
+  "bolt": {
+    "workspaces": [
+      "example"
+    ]
   }
 }

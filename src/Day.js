@@ -1,29 +1,37 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { PureComponent } from 'react';
-import styled from 'styled-components';
+import styled, { type StyledComponent } from 'styled-components';
 import { DateTime } from 'luxon';
-
-import getDate from './getDate';
-
 /** eslint-enable */
 
-const Td = styled.td`
+const equalDates = (d1: DateTime, d2: DateTime) => d1.hasSame(d2, 'day') && d1.hasSame(d2, 'month') && d1.hasSame(d2, 'year');
+
+type CellProps = {
+  active?: boolean,
+  inRange?: boolean,
+  hovered?: ?boolean,
+  onMouseOver?: (e: Event) => void,
+  onFocus?: (e: Event) => void,
+};
+
+const Cell: StyledComponent<CellProps, {}, HTMLTableCellElement> = styled.td`
   padding: 5px 0;
   text-align: center;
   cursor: pointer;
   color: ${props => (props.active || props.inRange ? '#f8f8f8' : '#191F26')};
   background-color: ${(props) => {
-    if (props.inRange) {
+    if (props.active) {
       return '#008950';
     }
-    if (props.active) {
+    if (props.inRange) {
       return '#00A15F';
     }
     return '#f8f8f8';
   }};
   border: 1px solid #dfe0e4;
   font-weight: ${props => (props.active ? 'bold' : 'normal')};
+  user-select: none;
 
   &:hover {
     background-color: #00A15F;
@@ -31,80 +39,80 @@ const Td = styled.td`
   }
 `;
 
-const DisabledTd = styled(Td)`
+const Disabled: StyledComponent<CellProps, {}, React$ComponentType<*>> = styled(Cell)`
   color: #999;
 `;
 
-type Props = {
-  i: number,
-  w: number,
-  selectDate: Function,
-  returnValue: DateTime,
-  returnState: boolean,
-  value: DateTime,
-};
+type Props = {|
+  +date: DateTime,
+  +i: number,
+  +selectDate: (date: DateTime) => void,
+  +onHover: (date: DateTime) => void,
+  +hovered: ?DateTime,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
+  +disabled: boolean,
+|};
 
 class Day extends PureComponent<Props> {
+  height = () => {
+    const { date, onHover } = this.props;
+    onHover(date);
+  }
+
   handleClick = () => {
-    const { i, w, selectDate } = this.props;
-    selectDate(i, w);
+    const { date, selectDate } = this.props;
+    selectDate(date);
   }
 
   render() {
     const {
-      i, w, selectDate, returnValue, value, returnState, ...other
+      i, selectDate, dateFrom, disabled, dateTo, hovered, date, onHover, ...other
     } = this.props;
-    const prevMonth = (w === 0 && i > 7);
-    const nextMonth = (w >= 4 && i <= 14);
-    const currentDate = getDate(i, w, returnState ? returnValue : value);
-    const selected =
-      (currentDate.day === returnValue.day && currentDate.month === returnValue.month) ||
-      (currentDate.day === value.day && currentDate.month === value.month);
+    const selected = equalDates(date, dateFrom) || equalDates(date, dateTo);
 
-    if (returnValue && !selected) {
-      const realDate = returnState ? value : DateTime.local();
-      if (currentDate < realDate) {
+    if (dateFrom && !selected && i != null) {
+      if (disabled) {
         return (
-          <DisabledTd
+          <Disabled
             {...other}
           >
             {i}
-          </DisabledTd>
+          </Disabled>
         );
       }
-      if (currentDate > value && currentDate < returnValue) {
+
+      if (+date > +dateFrom && +date < +dateTo) {
         return (
-          <Td
+          <Cell
             inRange
+            active={selected}
             onClick={this.handleClick}
             {...other}
           >
             {i}
-          </Td>
+          </Cell>
         );
       }
     }
 
-    if (prevMonth || nextMonth) {
+    if (i != null) {
       return (
-        <DisabledTd
+        <Cell
+          onFocus={this.height}
+          onMouseEnter={this.height}
+          hovered={Boolean(hovered)}
           active={selected}
           onClick={this.handleClick}
           {...other}
         >
           {i}
-        </DisabledTd>
+        </Cell>
       );
     }
 
     return (
-      <Td
-        active={selected}
-        onClick={this.handleClick}
-        {...other}
-      >
-        {i}
-      </Td>
+      <td />
     );
   }
 }

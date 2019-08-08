@@ -1,11 +1,24 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { PureComponent } from 'react';
-import styled from 'styled-components';
-import { ReactPageClick } from 'react-page-click';
+import styled, { type StyledComponent } from 'styled-components';
 /** eslint-enable */
 
-const Overlay = styled.div`
+const Container: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  height: 100vh;
+  width: 100vw;
+`;
+
+const Overlay: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -15,41 +28,39 @@ const Overlay = styled.div`
   z-index: 1000;
 `;
 
-const Popup = styled.div`
-  position: fixed;
-  top: 5%;
-  left: 50%;
-  width: 302px;
+const Popup: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
+  width: 617px;
   height: 477px;
-  margin-left: -151px;
-  border-radius: 5;
+  border-radius: 5px;
   z-index: 1001;
 `;
 
-const Content = styled.div`
+const Content: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   padding: 0;
 `;
 
 const noop = () => {};
 
 type Props = {
-  onClose: Function,
-  closeOnOutsideClick: boolean,
+  onClose: () => void,
+  closeOnOutsideClick?: boolean,
 };
 
 class Modal extends PureComponent<Props> {
+  static defaultProps = {
+    closeOnOutsideClick: true,
+  }
+
   render() {
     const { onClose, closeOnOutsideClick, ...props } = this.props;
 
     return (
-      <div>
-        <Overlay />
-        <ReactPageClick notify={closeOnOutsideClick ? onClose : noop}>
-          <Popup>
-            <Content {...props} />
-          </Popup>
-        </ReactPageClick>
-      </div>
+      <Container>
+        <Overlay onClick={closeOnOutsideClick ? onClose : noop} />
+        <Popup>
+          <Content {...props} />
+        </Popup>
+      </Container>
     );
   }
 }

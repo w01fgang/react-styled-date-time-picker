@@ -1,62 +1,74 @@
 // @flow
-/* eslint-disable import/no-unresolved, import/extensions */
+/* eslint-disable import/no-unresolved, import/extensions, import/no-extraneous-dependencies */
 import React, { PureComponent } from 'react';
-import styled from 'styled-components';
-import range from 'lodash.range';
+import styled, { type StyledComponent } from 'styled-components';
 import chunk from 'lodash.chunk';
 import { DateTime } from 'luxon';
 /** eslint-enable */
 import Day from './Day';
-import getDate from './getDate';
 
 const getWeeks = (date: DateTime) => {
   const firstDay = date.startOf('week');
   return Array(7).fill(1).map((el, i) => firstDay.plus({ day: i }).weekdayShort);
 };
 
-const CalendarContainer = styled.div`
+const CalendarContainer: StyledComponent<{ visible: boolean }, {}, HTMLDivElement> = styled.div`
   display: ${props => (props.visible ? 'display: inline-block;' : 'none')};
 `;
 
-const Toolbar = styled.div`
+const Toolbar: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   line-height: 30px;
   color: #00A15F;
   text-align: center;
   margin-bottom: 13px;
+  display: flex;
+  justify-content: space-between;
 `;
 
-const ButtonNext = styled.button`
-  color: #999999;
-  float: right;
+const Button: StyledComponent<{}, {}, HTMLButtonElement> = styled.button`
+  color: rgb(25, 31, 38);
+  background: transparent;
+  border: 1px solid rgb(0, 161, 95);
+  border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    color: rgb(248, 248, 248);
+    background-color: rgb(0, 161, 95);
+  }
 
   &:focus {
     outline: none;
   }
 `;
-const ButtonPrev = styled.button`
-  color: #999999;
-  float: left;
 
-  &:focus {
-    outline: none;
-  }
-`;
+const ButtonNext: StyledComponent<{}, {}, React$ComponentType<*>> = styled(Button)``;
+
+const ButtonPrev: StyledComponent<{}, {}, React$ComponentType<*>> = styled(Button)``;
 
 const CurrentDate = styled.span`
   color: #00A15F;
+  user-select: none;
 `;
 
 const Table = styled.table`
-  width: 100%;
+  width: 270px;
+  min-height: 206px;
   border-collapse: collapse;
   border-spacing: 0;
   table-layout: fixed;
 `;
 
-const Td = styled.td`
+const TableContainer: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const WeekDay = styled.td`
   padding: 8px 0;
   text-align: center;
-  cursor: pointer;
   color: #00A15F;
   border: 1px solid #dfe0e4;
   font-size: 11px;
@@ -64,126 +76,166 @@ const Td = styled.td`
   text-transform: uppercase;
   font-size: 12px;
   text-transform: capitalize;
+  user-select: none;
 `;
 
+const TableBContainer: StyledComponent<{}, {}, HTMLDivElement> = styled.div``;
+
 type Props = {
-  onChange: Function,
-  switchTab: Function,
-  value: DateTime,
-  returnValue: DateTime,
-  returnState: boolean,
-  language: Language,
-  visible: boolean,
-  returnState: boolean,
+  +dateFrom: DateTime,
+  +dateTo: DateTime,
+  +onChange: (dateFrom: DateTime, dateTo: DateTime) => void,
+  +language: Language,
+  +visible: boolean,
 };
 
-class Calendar extends PureComponent<Props> {
-  selectDate = (i: number, w: number) => {
-    const {
-      value, returnValue, returnState, onChange, switchTab,
-    } = this.props;
-    let date;
-    if (returnState) {
-      date = getDate(i, w, returnValue);
-    } else {
-      date = getDate(i, w, value);
-    }
-    const options = onChange(date);
+type State = {
+  first: boolean,
+  month: DateTime,
+  hoveredDay: ?DateTime,
+};
 
-    if (!options || options.switchTab) {
-      switchTab();
-    }
+class Calendar extends PureComponent<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      first: true,
+      month: props.dateFrom,
+      hoveredDay: null,
+    };
   }
 
-  prevMonth = (e: Event) => {
-    e.preventDefault();
-    const {
-      returnState, returnValue, value, onChange,
-    } = this.props;
-    if (returnState) {
-      onChange(returnValue.minus({ month: 1 }));
-    } else {
-      onChange(value.minus({ month: 1 }));
-    }
+  setHovered = (hoveredDay: DateTime) => {
+    this.setState(() => ({ hoveredDay }));
   }
 
-  nextMonth = (e: Event) => {
-    e.preventDefault();
-    if (this.props.returnState) {
-      this.props.onChange(this.props.returnValue.plus({ month: 1 }));
+  selectDate = (date: DateTime) => {
+    const { dateFrom, dateTo, onChange } = this.props;
+
+    const { first } = this.state;
+
+    if (first) {
+      onChange(date, +dateTo < +date ? date.plus({ days: 1 }) : dateTo);
     } else {
-      this.props.onChange(this.props.value.plus({ month: 1 }));
+      onChange(dateFrom, date);
     }
+    this.setState(state => ({ first: !state.first }));
+  }
+
+  prevMonth = () => {
+    const { month } = this.state;
+    const nextMonth = month.minus({ month: 1 });
+    if (nextMonth.month < DateTime.local().month && nextMonth.year === DateTime.local().year) {
+      return;
+    }
+
+    this.setState(() => ({ month: nextMonth }));
+  }
+
+  nextMonth = () => {
+    this.setState(({ month }) => ({ month: month.plus({ month: 1 }) }));
   }
 
   render() {
     const {
-      value, visible, language, returnValue, returnState,
+      dateFrom, visible, language, dateTo,
     } = this.props;
-    let d1;
-    let d2;
-    let d3;
-    if (returnState) {
-      d1 = returnValue.minus({ month: 1 }).endOf('month').day;
-      d2 = returnValue.set({ day: 1 }).day;
-      d3 = returnValue.endOf('month').day;
-    } else {
-      d1 = value.minus({ month: 1 }).endOf('month').day;
-      d2 = value.set({ day: 1 }).day;
-      d3 = value.endOf('month').day;
-    }
 
+    const { hoveredDay, month } = this.state;
+
+    const d3 = month.endOf('month').day;
+    const d4 = month.plus({ month: 1 }).endOf('month').day;
+
+    const d5 = month.set({ day: 1 }).weekday;
+    const d6 = month.plus({ month: 1 }).set({ day: 1 }).weekday;
+    const dd = new Array(d5 - 1).fill(null);
+    const ds = new Array(d6 - 1).fill(null);
     const days = [
-      ...range(d1 - (d2 + 1), d1 + 1),
-      ...range(1, d3 + 1),
-      ...range(1, (42 - d3 - d2) + 1),
+      ...dd,
+      ...new Array(d3).fill(1).map((_, el) => el + 1),
+    ];
+
+    const days1 = [
+      ...ds,
+      ...new Array(d4).fill(1).map((_, el) => el + 1),
     ];
 
     return (
       <CalendarContainer visible={visible}>
         <Toolbar>
           <ButtonPrev type="button" className="prev-month" onClick={this.prevMonth}>
-            {returnState ? returnValue.minus({ month: 1 }).monthShort : value.minus({ month: 1 }).monthShort}
+            {month.minus({ month: 1 }).toLocaleString({ month: 'short' })}
           </ButtonPrev>
           <CurrentDate>
-            {returnState ?
-              returnValue.toLocaleString({ month: 'long', year: 'numeric' }) :
-              value.toLocaleString({ month: 'long', year: 'numeric' })
-            }
+            {month.toLocaleString({ month: 'long', year: 'numeric' })}
+          </CurrentDate>
+          <CurrentDate>
+            {month.plus({ month: 1 }).toLocaleString({ month: 'long', year: 'numeric' })}
           </CurrentDate>
           <ButtonNext type="button" className="next-month" onClick={this.nextMonth}>
-            {returnState ? returnValue.plus({ month: 1 }).monthShort : value.plus({ month: 1 }).monthShort}
+            {month.plus({ month: 2 }).toLocaleString({ month: 'short' })}
           </ButtonNext>
         </Toolbar>
+        <TableContainer>
+          <TableBContainer>
+            <Table>
+              <thead>
+                <tr>
+                  {getWeeks(month.setLocale(language)).map((w, i) => <WeekDay key={`${i + w}`}>{w}</WeekDay>)}
+                </tr>
+              </thead>
 
-        <Table>
-          <thead>
-            <tr>
-              {returnState ?
-                getWeeks(returnValue.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>) :
-                getWeeks(value.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)
-              }
-            </tr>
-          </thead>
-
-          <tbody>
-            {chunk(days, 7).map((row, w) => (
-              <tr key={`week-${w + w}`}>
-                {row.map(i => (
-                  <Day
-                    key={`day-${i + i}`}
-                    i={i}
-                    w={w}
-                    value={value}
-                    selectDate={this.selectDate}
-                    returnValue={returnValue}
-                    returnState={returnState}
-                  />
+              <tbody>
+                {chunk(days, 7).map((row, w) => (
+                  <tr key={`week-${w + w}`}>
+                    {row.map(i => (
+                      <Day
+                        key={`day-${Math.random()}`}
+                        date={month.set({ day: i })}
+                        i={i}
+                        selectDate={this.selectDate}
+                        dateTo={dateTo}
+                        dateFrom={dateFrom}
+                        hovered={hoveredDay}
+                        onHover={this.setHovered}
+                        disabled={+month.set({ day: i }) < +DateTime.local()}
+                      />
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+              </tbody>
+            </Table>
+          </TableBContainer>
+          <TableBContainer>
+            <Table>
+              <thead>
+                <tr>
+                  {getWeeks(month.setLocale(language)).map((w, i) => <WeekDay key={`${i + w}`}>{w}</WeekDay>)}
+                </tr>
+              </thead>
+
+              <tbody>
+                {chunk(days1, 7).map((row, w) => (
+                  <tr key={`week-${w + w}`}>
+                    {row.map(i => (
+                      <Day
+                        key={`day1-${Math.random()}`}
+                        date={month.plus({ month: 1 }).set({ day: i })}
+                        i={i}
+                        selectDate={this.selectDate}
+                        dateTo={dateTo}
+                        dateFrom={dateFrom}
+                        hovered={hoveredDay}
+                        onHover={this.setHovered}
+                        disabled={false}
+                      />
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableBContainer>
+        </TableContainer>
       </CalendarContainer>
     );
   }
