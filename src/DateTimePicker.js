@@ -45,6 +45,8 @@ const TabButton: StyledComponent<{ active: boolean }, {}, HTMLButtonElement> = s
   padding: 7px;
   border: 1px solid #00A15F;
   border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
 
   &:first-child {
     border-top-right-radius: 0;

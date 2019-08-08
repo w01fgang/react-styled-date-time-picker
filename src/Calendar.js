@@ -31,6 +31,7 @@ const Button: StyledComponent<{}, {}, HTMLButtonElement> = styled.button`
   border: 1px solid rgb(0, 161, 95);
   border-radius: 3px;
   cursor: pointer;
+  user-select: none;
 
   &:hover {
     color: rgb(248, 248, 248);
@@ -48,6 +49,7 @@ const ButtonPrev: StyledComponent<{}, {}, React$ComponentType<*>> = styled(Butto
 
 const CurrentDate = styled.span`
   color: #00A15F;
+  user-select: none;
 `;
 
 const Table = styled.table`
@@ -64,10 +66,9 @@ const TableContainer: StyledComponent<{}, {}, HTMLDivElement> = styled.div`
   justify-content: space-between;
 `;
 
-const Td = styled.td`
+const WeekDay = styled.td`
   padding: 8px 0;
   text-align: center;
-  cursor: pointer;
   color: #00A15F;
   border: 1px solid #dfe0e4;
   font-size: 11px;
@@ -75,6 +76,7 @@ const Td = styled.td`
   text-transform: uppercase;
   font-size: 12px;
   text-transform: capitalize;
+  user-select: none;
 `;
 
 const TableBContainer: StyledComponent<{}, {}, HTMLDivElement> = styled.div``;
@@ -123,7 +125,7 @@ class Calendar extends PureComponent<Props, State> {
   prevMonth = () => {
     const { month } = this.state;
     const nextMonth = month.minus({ month: 1 });
-    if (nextMonth.month < DateTime.local().month) {
+    if (nextMonth.month < DateTime.local().month && nextMonth.year === DateTime.local().year) {
       return;
     }
 
@@ -179,7 +181,7 @@ class Calendar extends PureComponent<Props, State> {
             <Table>
               <thead>
                 <tr>
-                  {getWeeks(month.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
+                  {getWeeks(month.setLocale(language)).map((w, i) => <WeekDay key={`${i + w}`}>{w}</WeekDay>)}
                 </tr>
               </thead>
 
@@ -208,7 +210,7 @@ class Calendar extends PureComponent<Props, State> {
             <Table>
               <thead>
                 <tr>
-                  {getWeeks(month.setLocale(language)).map((w, i) => <Td key={`${i + w}`}>{w}</Td>)}
+                  {getWeeks(month.setLocale(language)).map((w, i) => <WeekDay key={`${i + w}`}>{w}</WeekDay>)}
                 </tr>
               </thead>
 

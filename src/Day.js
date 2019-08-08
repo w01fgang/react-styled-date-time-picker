@@ -31,6 +31,7 @@ const Cell: StyledComponent<CellProps, {}, HTMLTableCellElement> = styled.td`
   }};
   border: 1px solid #dfe0e4;
   font-weight: ${props => (props.active ? 'bold' : 'normal')};
+  user-select: none;
 
   &:hover {
     background-color: #00A15F;
