@@ -117,6 +117,10 @@ class Calendar extends PureComponent<Props, State> {
     if (first) {
       onChange(date, +dateTo < +date ? date.plus({ days: 1 }) : dateTo);
     } else {
+      if (+date < +dateFrom) {
+        onChange(date, dateTo);
+        return;
+      }
       onChange(dateFrom, date);
     }
     this.setState(state => ({ first: !state.first }));
