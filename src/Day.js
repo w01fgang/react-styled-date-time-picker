@@ -82,7 +82,6 @@ class Day extends PureComponent<Props> {
       }
 
       if (+date > +dateFrom && +date < +dateTo) {
-        console.log('first');
         return (
           <Cell
             inRange
