@@ -4301,10 +4301,10 @@ lru-cache@^4.0.1:
     pseudomap "^1.0.2"
     yallist "^2.1.2"
 
-luxon@^0.5.3:
-  version "0.5.8"
-  resolved "https://registry.yarnpkg.com/luxon/-/luxon-0.5.8.tgz#b647a67802ed93028576f02e6bb140a9668cdb7f"
-  integrity sha512-TQImsQkWWXqiF43cWbcLN6CxaTzsJJD+8lvgrG8bs0Hc5YBLn+2dAmqUt+BKp2n5+mK0ABJ07Ss7V28H2sYF+w==
+luxon@^1.22.0:
+  version "1.22.0"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.22.0.tgz#639525c7c69e594953c7b142794466b8ea85b868"
+  integrity sha512-3sLvlfbFo+AxVEY3IqxymbumtnlgBwjDExxK60W3d+trrUzErNAz/PfvPT+mva+vEUrdIodeCOs7fB6zHtRSrw==
 
 macos-release@^1.0.0:
   version "1.1.0"
