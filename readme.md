@@ -1,3 +1,5 @@
+# Not maintained
+
 ## Minimal example
 
 ```javascript
