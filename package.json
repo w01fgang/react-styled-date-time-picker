@@ -18,7 +18,7 @@
     "lodash.range": "^3.2.0",
     "luxon": "^0.5.3",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react-dom": "^16.13.0",
     "styled-components": "^4.0.2"
   },
   "devDependencies": {
